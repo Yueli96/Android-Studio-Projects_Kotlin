@@ -1,0 +1,514 @@
+<html>
+	<head>
+		<title>CS 193A - Lists</title>
+		<link rel="stylesheet" href="highlightjs/styles/default.css">
+		<link rel="stylesheet" href="reveal/css/reveal.css">
+		<link rel="stylesheet" href="reveal/css/theme/white.css">
+		<link rel="stylesheet" href="cs193a-slides.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+
+<!-- BEGIN SLIDES AREA -->
+
+<section class="titleslide">
+	<h1>CS 193A</h1>
+
+	<p>Lists</p>
+</section>
+
+<section>
+	<h1>
+		ListView
+		(<a class="popup" href="http://developer.android.com/guide/topics/ui/layout/listview.html">link</a>)
+
+		<span class="figuresright">
+			<img src="images/widget-listview.png" alt="figure" />
+		</span>
+	</h1>
+
+	<p class="caption">
+		An ordered collection of selectable choices
+	</p>
+	
+	<table class="methodtable boxedtable">
+		<caption>key attributes in XML</caption>
+		<tr>
+			<td><code>android:id="@+id/<var>id</var>"</code></td>
+			<td>unique ID for use in Kotlin code</td>
+		</tr>
+		<tr>
+			<td><code>android:clickable="<var>bool</var>"</code></td>
+			<td>set to <code>false</code> to disable clicking</td>
+		</tr>
+		<tr>
+			<td><code>android:entries="@array/<var>name</var>"</code></td>
+			<td>set of options to appear in the list
+				(must match an array in <span class="filename">strings.xml</span>)</td>
+		</tr>
+	</table>
+</section>
+
+<section>
+	<h1>
+		Spinner
+		(<a class="popup" href="http://developer.android.com/guide/topics/ui/controls/spinner.html">link</a>)
+
+		<span class="figuresright">
+			<img src="images/widget-spinner.png" alt="figure" />
+		</span>
+	</h1>
+
+	<p class="caption">
+		A drop-down menu of selectable choices
+	</p>
+
+	<table class="methodtable boxedtable">
+		<caption>key attributes in XML</caption>
+		<tr>
+			<td><code>android:id="@+id/<var>id</var>"</code></td>
+			<td>unique ID for use in Kotlin code</td>
+		</tr>
+		<tr>
+			<td><code>android:clickable="<var>bool</var>"</code></td>
+			<td>
+				set to <code>false</code> to disable the spinner
+			</td>
+		</tr>
+		<tr>
+			<td><code>android:entries="@array/<var>name</var>"</code></td>
+			<td>
+				set of options to appear in spinner <br />
+				(must match an array in <span class="filename">strings.xml</span>)
+			</td>
+		</tr>
+		<tr>
+			<td><code>android:prompt="@string/<var>text</var>"</code></td>
+			<td>
+				title text when dialog of choices pops up
+			</td>
+		</tr>
+	</table>
+</section>
+
+<section>
+	<h1>Static lists</h1>
+	
+	<div class="figuresright">
+		<img src="images/list-display.png" alt="figure" />
+	</div>
+	
+	<ul>
+		<li><strong>static list</strong>: Content is fixed and known before the app runs.
+		<ul><li>Declare the list elements in the <span class="filename">strings.xml</span> resource file.</li></ul>
+	</ul>
+	
+	<ul>
+		<li><strong>dynamic list</strong>: Content is read or generated as the program runs.
+		<ul><li>Comes from a data file, or from the internet, etc.
+			<li>Must be set in the Kotlin code.
+	</ul>
+</section>
+
+<section>
+	<h1>String resources</h1>
+	
+	<ul>
+		<li>Declare constant strings and arrays in <span class="filename">res/values/strings.xml</span>:</li>
+	</ul>
+	
+	<pre class=""><code class="xml">
+&lt;resources&gt;
+	&lt;string name=&quot;<var>name</var>&quot;&gt;<var>value</var>&lt;/string&gt;
+	&lt;string name=&quot;<var>name</var>&quot;&gt;<var>value</var>&lt;/string&gt;
+
+	&lt;string-array name=&quot;<var>name</var>&quot;&gt;
+		&lt;item&gt;<var>value</var>&lt;/item&gt;
+		&lt;item&gt;<var>value</var>&lt;/item&gt;   &lt;!-- must escape ' as \' in values --&gt;
+		...
+		&lt;item&gt;<var>value</var>&lt;/item&gt;
+	&lt;/string-array&gt;
+&lt;/resources&gt;
+</code></pre>
+
+	<ul>
+		<li>Refer to them in Kotlin code:
+			<ul>
+				<li>as a resource ID:	    <code>R.string.<var>name</var></code>,  <code>R.array.<var>name</var></code></li>
+				<li>as a string or array:  <code>resources.getString(R.string.<var>name</var>)</code>,
+					<code>resources.getStringArray(R.array.<var>name</var>)</code>
+				</li>
+			</ul>
+		</li>
+	</ul>
+</section>
+
+<section>
+	<h1>Spinner example</h1>
+	
+	<div class="figuresright">
+		<img src="images/spinner-turtles.png" alt="figure" />
+	</div>
+
+	<pre class=""><code class="xml">
+&lt;!-- in res/values/strings.xml: --&gt;
+&lt;resources&gt;
+	&lt;string name=&quot;choose_turtle&quot;&gt;Choose a turtle:&lt;/string&gt;
+	&lt;string-array name=&quot;turtles&quot;&gt;
+		&lt;item&gt;Leonardo&lt;/item&gt;
+		&lt;item&gt;Michelangelo&lt;/item&gt;
+		&lt;item&gt;Donatello&lt;/item&gt;
+		&lt;item&gt;Raphael&lt;/item&gt;
+	&lt;/string-array&gt;
+&lt;/resources&gt;
+</code></pre>
+	
+	<pre class=""><code class="xml">
+&lt;!-- in layout XML --&gt;
+&lt;Spinner ... android:id=&quot;@+id/tmnt&quot;
+	android:entries=&quot;@array/turtles&quot;
+	android:prompt=&quot;@string/choose_turtle&quot; /&gt;
+</code></pre>
+</section>
+
+
+<section>
+	<h1>List events</h1>
+	
+	<div class="figuresright">
+		<img src="images/event.png" alt="image" />
+	</div>
+
+	<ul>
+		<li>Lists don't use the <code>onClick</code> event. Instead:
+			<ul>
+				<li><code>setOnItemClickListener</code>
+				<li class="subbullet">when user taps on an item in the list
+
+				<li><code>setOnItemLongClickListener</code>
+				<li class="subbullet">when user taps and holds finger on an item
+
+				<li><code>setOnItemSelectedListener</code>
+				<li class="subbullet">when an item in the list has been selected (<code>Spinner</code>)
+				
+				<li>each accepts a function that takes 4 parameters: the list, the item clicked, its index, and its ID
+
+				<li>Others: <code>onDrag</code>, <code>onFocusChanged</code>, <code>onHover</code> <code>onKey</code>, <code>onScroll</code>, <code>onTouch</code>, ...
+			</ul>
+		<li>Event listeners must be attached in <strong>Kotlin</strong>, not XML.</li>
+	</ul>
+</section>
+
+<section>
+	<h1>List event example</h1>
+	
+	<pre><code class="kotlin">
+class MyActivity : AppCompatActivity() {
+
+	override fun onCreate(savedInstanceState: Bundle?) {
+		...
+		my_list.setOnItemClickListener { list, item, index, rowID -&gt;
+			// code to run when user clicks that item
+		}
+	}
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>Lambda functions</h1>
+	
+	<ul>
+		<li>A <em class="term">lambda</em> is an anonymous function passed as a parameter.
+		<li>general syntax: <code>{ <var>param</var>, <var>param</var>, <var>param</var> -&gt; <var>code</var> }</code>
+		<li>syntax for no parameters or 1 parameter (implicitly named <code>it</code>): <code>{ <var>code</var> }</code>
+		<li>can replace a paremeter with <code>_</code> if you don't use it
+	</ul>
+	
+	<pre><code class="kotlin">
+my_list.setOnItemClickListener { _, _, index, _ -&gt;
+	Toast.makeText(this, "You clicked item #$index", Toast.LENGTH_SHORT).show()
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>Item long click example</h1>
+	
+	<ul>
+		<li>the long-click event is essentially the same as the click event, except that the lambda must return a <code>boolean</code> value
+		<li>lambdas "return" values by simply writing the value on its own at the end of the lambda's body of code
+	</ul>
+	
+	<pre><code class="kotlin">
+class MyActivity : AppCompatActivity() {
+
+	override fun onCreate(savedInstanceState: Bundle?) {
+		...
+		my_list.setOnItem<em>Long</em>ClickListener { _, _, index, _ -&gt;
+			// code to run when user clicks that item
+			Toast.makeText(this, "You clicked item #$index", Toast.LENGTH_SHORT).show()
+			
+			<em>true</em>
+		}
+	}
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>Spinner event listener</h1>
+	
+	<ul>
+		<li>If using <code>Spinner</code>, must use an item <strong>selected</strong> listener, not item click listener
+		<li>the syntax is different and uglier...
+	</ul>
+	
+	<pre><code class="kotlin">
+class MyActivity : AppCompatActivity() {
+
+	override fun onCreate(savedInstanceState: Bundle?) {
+		...
+		my_spinner.onItem<em>Selected</em>Listener = object : AdapterView.OnItemSelectedListener{
+			override fun onItemSelected(parent: AdapterView&lt;*&gt;?, view: View?, index: Int, id: Long) {
+				// what to do when an item is chosen
+			}
+
+			override fun onNothingSelected(parent: AdapterView&lt;*&gt;?) {
+				// empty
+			}
+		}
+	}
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>List adapters</h1>
+	
+	<p>
+		<strong>adapter</strong>: Helps turn list data into list view items.
+		Used for creating dynamic lists.
+	</p>
+
+	<ul>
+		<li>common adapters:
+		<ul>
+			<li><a class="popup" href="https://developer.android.com/reference/android/widget/ArrayAdapter.html"><code>ArrayAdapter</code></a>: items come from an array or list
+			<li><a class="popup" href="https://developer.android.com/reference/android/widget/CursorAdapter.html"><code>CursorAdapter</code></a>: items come from a database query
+		</ul>
+		
+		<li>Syntax for creating an adapter:
+			<pre><code class="kotlin">val <var>name</var> = ArrayAdapter&lt;String&gt;(<var>activity</var>, <var>layout</var>, <var>array</var>)</code></pre>
+			<ul>
+				<li>the activity is usually <code>this</code></li>
+				<li>the default layout for lists is  <code>android.R.layout.simple_list_item_1</code></li>
+				<li>get the array/list by reading your file or data source of choice</li>
+			</ul>
+		<li>attach it by setting <code>adapter</code> property of <code>ListView</code></li>
+	</ul>
+</section>
+
+<section>
+	<h1>Adapter example</h1>
+	
+	<pre><code class="kotlin">
+// create an adapter based on a list
+val myArray = ArrayList&lt;String&gt;()
+myArray.add("Windows")
+myArray.add("Linux")
+myArray.add("Mac OS X")
+
+val adapter = ArrayAdapter&lt;String&gt;(
+		this, android.R.layout.simple_list_item_1, myArray)
+
+my_list.adapter = myAdapter
+</code></pre>
+
+</section>
+
+<section>
+	<h1>Changes to list data</h1>
+	
+	<p>
+		If the data in the list changes, you must notify the list.
+	</p>
+	
+	<pre><code class="kotlin">
+var myArray : ArrayList&lt;String&gt; = ...
+var myAdapter : ArrayAdapter&lt;String&gt; = ...;
+my_list.adapter = myAdapter
+
+// data changes in some way
+myArray.remove(0)
+...
+
+// need to notify the ListView of the change!
+myAdapter.<strong>notifyDataSetChanged</strong>()
+</code></pre>
+</section>
+
+<section>
+	<h1>
+		ListView methods
+		(<a href="https://developer.android.com/reference/android/widget/ListView.html">link</a>)
+	</h1>
+	
+	<table class="methodtable">
+		<tr>
+			<th>Method</th>
+			<th>Description</th>
+		</tr>
+		
+		<tr>
+			<td><code>adapter</code></td>
+			<td>array adapter</td>
+		</tr>
+		
+		<tr>
+			<td><code>count</code></td>
+			<td># of items in list</td>
+		</tr>
+		
+		<tr>
+			<td><code>getItemAtPosition(<var>index</var>)</code></td>
+			<td>return item at a given index</td>
+		</tr>
+		
+		<tr>
+			<td><code>isClickable</code></td>
+			<td>get/set whether list items can be clicked</td>
+		</tr>
+		
+		<tr>
+			<td><code>isFocusable</code></td>
+			<td>whether items can be focused on</td>
+		</tr>
+		
+		<tr>
+			<td><code>selectedItem</code></td>
+			<td>item currently selected, if any</td>
+		</tr>
+		
+		<tr>
+			<td><code>selectedItemIndex</code></td>
+			<td>currently selected item's index</td>
+		</tr>
+		
+		<tr>
+			<td><code>performItemClick(<var>view</var>, <var>index</var>, <var>id</var>)</code></td>
+			<td>simulate a click</td>
+		</tr>
+		
+		<tr>
+			<td><code>setOnItemClickListener</code></td>
+			<td>attaching event listeners</td>
+		</tr>
+		
+		<tr>
+			<td><code>setOnItemLongClickListener</code></td>
+			<td></td>
+		</tr>
+		
+		<tr>
+			<td><code>setOnItemSelectedListener</code></td>
+			<td></td>
+		</tr>
+		
+		<tr>
+			<td><code>selection = <var>index</var></code></td>
+			<td>sets which element is selected</td>
+		</tr>
+	</table>
+</section>
+
+<section>
+	<h1>
+		RecyclerView
+		(<a class="popup" href="http://developer.android.com/guide/topics/ui/layout/recyclerview.html">link</a>)
+
+		<span class="figuresright">
+			<img src="images/widget-recyclerview.png" alt="figure" />
+		</span>
+	</h1>
+
+	<p class="caption">
+		similar to <code>ListView</code>, but newer
+	</p>
+	
+	<ul>
+		<li>pro: faster performance ("recycles" UI resources as list changes)
+		<li>pro: more flexible and versatile for different list styles and layouts
+		<li>con: more complicated than <code>ListView</code>
+		<li>con: less backward-compatible to old versions of Android
+		<li>con: harder to listen to events on list items
+		<li>con: did I mention it is complicated?
+	</ul>
+</section>
+
+<section>
+	<h1>Custom list layout</h1>
+	
+	<div class="figuresright">
+		<img src="images/list-custom-layout.jpg" alt="figure" />
+	</div>
+	
+	<ul>
+		<li>If you want your list to look different than the default appearance (of just a text string for each line), you must:
+			<ul>
+				<li>Write a short <strong>layout XML file</strong> describing the layout for each row.
+				<li>Tell your <code>ArrayAdapter</code> how to supply the item text to each item.
+	</ul>
+</section>
+
+<section>
+	<h1>Custom list layout XML</h1>
+	
+	<pre><code class="xml">
+&lt;!-- res/layout/mylistlayout.xml --&gt;
+&lt;LinearLayout ... android:orientation=&quot;horizontal&quot;&gt;
+	&lt;!-- an icon on each list item --&gt;
+	&lt;ImageView ... <em>android:id=&quot;@+id/list_row_image&quot;</em>
+		android:layout_width=&quot;100dp&quot;
+		android:layout_height=&quot;100dp&quot;
+		android:src=&quot;@drawable/smiley&quot; /&gt;
+
+	&lt;!-- the text of each list item --&gt;
+	&lt;TextView ... <em>android:id=&quot;@+id/list_row_text&quot;</em>
+		android:textStyle=&quot;bold&quot;
+		android:textSize=&quot;22dp&quot;
+		android:text=&quot;&quot;
+		android:background=&quot;#336699&quot; /&gt;
+&lt;/LinearLayout&gt;
+</code></pre>
+</section>
+
+<section>
+	<h1>Custom list layout code</h1>
+	
+	<pre><code class="kotlin">
+val myArray : ArrayList&lt;String&gt; = ...  // load data from file
+
+val myAdapter =
+  ArrayAdapter&lt;String&gt;(this, 
+		R.layout.mylistlayout,   // layout XML id
+		R.id.list_row_text,      // item text id
+		myArray)
+
+my_list.adapter = myAdapter
+</code></pre>
+</section>
+
+<!-- END SLIDES AREA -->
+			</div>
+		</div>
+
+		<script src="highlightjs/highlight.pack.js" charset="utf-8"></script>
+		<script src="cs193a-slides.js"></script>
+		<script src="reveal/js/reveal.js"></script>
+		<script>
+			initializeSlides();
+		</script>
+	</body>
+</html>

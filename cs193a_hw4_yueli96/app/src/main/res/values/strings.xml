@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">cs193a_hw4_yueli96</string>
+    <string name="view_user">Click on a user to see more details</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

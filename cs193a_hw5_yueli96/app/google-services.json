@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "243231669755",
+    "firebase_url": "https://animalgame-cs193a.firebaseio.com",
+    "project_id": "animalgame-cs193a",
+    "storage_bucket": "animalgame-cs193a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:243231669755:android:28ed785409e7a47a",
+        "android_client_info": {
+          "package_name": "cs193a.stanford.edu.animalgame"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "243231669755-4kcc3ei7ijdotds6nmvmkelrrhq6piv9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6RGNJgCqW_gkcqJNLeTJ1ppGGt4IhTJI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

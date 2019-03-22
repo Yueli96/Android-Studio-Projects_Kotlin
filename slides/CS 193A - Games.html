@@ -1,0 +1,846 @@
+<html>
+	<head>
+		<title>CS 193A - Games</title>
+		<link rel="stylesheet" href="highlightjs/styles/default.css">
+		<link rel="stylesheet" href="reveal/css/reveal.css">
+		<link rel="stylesheet" href="reveal/css/theme/white.css">
+		<link rel="stylesheet" href="cs193a-slides.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+
+<!-- BEGIN SLIDES AREA -->
+
+<section class="titleslide">
+	<h1>CS 193A</h1>
+
+	<p>Making Basic 2D Games</p>
+</section>
+
+<section>
+	<h1>Lunar Lander game</h1>
+
+	<div class="figuresright">
+		<img src="images/lunar-lander-1.png" alt="lunar lander" />
+	</div>
+	
+	<p>
+		Let's write a <strong>lunar lander</strong> game.
+	</p>
+
+	<ul>
+		<li>Rocket falls with 4 initial velocity, 0.5 downward acceleration.
+		<li>Touch screen and hold to thrust; when thrusting, rocket accelerates upward at 0.3 acceleration.
+		<li>Once per second, an asteroid appears at right edge of screen, going left with 12 velocity.
+		<li>If it hits rocket, game is over.
+		<li>Player earns 1 point per second alive.
+		<li>If rocket can touch the bottom of the screen with a velocity of 7 or less, player wins.
+	</ul>
+</section>
+
+<section>
+	<h1>A Sprite class</h1>
+
+	<ul>
+		<li><strong>sprite</strong>: An object of interest in a game.
+			<ul>
+				<li>possible data: location, size, velocity, shape/image, points, ...
+				<li>Many games declare some kind of Sprite class to represent the sprites.
+				<li>Useful sprite operations:  drawing, movement, visibility, collisions
+				<li>See Stanford library class:  <code>GSprite</code>
+			</ul>
+	</ul>
+
+	<div class="figuresright">
+		<img src="images/pacman-1.png" alt="pacman sprites" />
+	</div>
+	
+	<pre class="longcode"><code class="kotlin">
+// an example sprite class
+class Sprite {
+	// position
+	var x: Float
+	var y: Float
+	
+	// size
+	var width: Float
+	var height: Float
+	
+	// velocity
+	var dx: Float
+	var dy: Float
+	
+	// color
+	var paint: Paint
+	...
+}
+</code></pre>
+	
+</section>
+
+<section>
+	<h1>Sprite drawing code</h1>
+
+	<ul>
+		<li>Sprites can contain code to draw themselves.
+			<ul>
+				<li>Game's <code>onDraw</code> tells each sprite to draw itself in a loop.
+			</ul>
+	</ul>
+
+	<div class="figuresright">
+		<div style="display: inline-block; background-color: #66a; border: 1px solid black; width: 2em; height: 2em;"></div>
+	</div>
+	
+	<pre class="longcode"><code class="kotlin">
+// example sprite drawing code
+class Sprite {
+	...
+	fun draw(canvas: Canvas) {
+		canvas.drawRect(x, y, x+w, y+h, paint)
+	}
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>Sprite with bitmap</h1>
+
+	<ul>
+		<li>Most games draw their sprites as bitmap images.
+			<ul>
+				<li><code>GSprite</code>: <code>bitmap</code> property and constructor
+			</ul>
+	</ul>
+
+	<div class="figuresright">
+		<img style="border: 1px solid black" src="images/pacman.png" alt="pacman bitmap" />
+	</div>
+	
+	<pre class="longcode"><code class="kotlin">
+// example sprite drawing code
+class Sprite {
+	<em>var bitmap: Bitmap</em>
+	...
+	fun draw(canvas: Canvas) {
+		<em>canvas.drawBitmap(bitmap, x, y, paint)</em>
+	}
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>Moving Sprites</h1>
+
+	<ul>
+		<li>One way to do movement: Have each sprite store a <strong>velocity</strong>.
+			<ul>
+				<li>dx/dy pair, or write a 2D Vector class
+				<li>usually write a simple method to tell the sprite to move/update itself
+				<li>this method is called once for each frame in your game's animation loop
+				<li><code>GSprite</code>: <code>setVelocity</code>, <code>rotateVelocity</code>
+			</ul>
+	</ul>
+
+	<div class="figuresright">
+		<img style="border: 1px solid black; vertical-align: middle;" src="images/pacman.png" alt="pacman bitmap" />
+		<span style="font-size: smaller; vertical-align: middle;">&rarr;&nbsp;dx=5,dy=0</span>
+	</div>
+	
+	<pre class="longcode"><code class="kotlin">
+// example sprite with movement velocity
+class Sprite {
+	<em>var dx: Float</em>
+	<em>var dy: Float</em>
+	...
+	fun move() {
+		<em>x += dx</em>
+		<em>y += dy</em>
+	}
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>Acceleration</h1>
+
+	<ul>
+		<li>You may want to apply <strong>acceleration</strong> to movement.
+			<ul>
+				<li>could be a single value (scale up/down), separate ax/ay, or another 2D vector
+				<li>updates velocity when object moves
+				<li>need to watch out for sign issues if velocity components are negative
+				<li><code>GSprite</code>: <code>setAcceleration</code>
+			</ul>
+	</ul>
+
+	<div class="figuresright">
+		<img style="border: 1px solid black; vertical-align: middle;" src="images/pacman.png" alt="pacman bitmap" />
+		<span style="font-size: smaller; vertical-align: middle;">&rarr;&nbsp;&rarr;&nbsp;&rarr;</span>
+	</div>
+	
+	<pre class="longcode"><code class="kotlin">
+// example sprite with acceleration
+class Sprite {
+	var dx: Float
+	var dy: Float
+	<em>var ax: Float</em>
+	<em>var ay: Float</em>
+	...
+	fun move() {
+		x += dx
+		y += dy
+		<em>dx *= (1.0f + ax)</em>   // accelerate
+		<em>dy *= (1.0f + ay)</em>
+	}
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>Frame rate independence</h1>
+
+	<ul>
+		<li>You may want to move objects at a <strong>constant speed</strong> regardless of the number of frames/sec used in your animation.
+			<ul>
+				<li>To do this, allow sprites to see FPS and weight their velocity accordingly.
+				<li>Now dx/dy means change per second, not per frame of animation.
+				<li>Advanced: On slower/older devices, can implement a <em class="term">frame skip</em>.
+			</ul>
+	</ul>
+	
+	<div class="figuresright">
+		<img style="border: 1px solid black; vertical-align: middle;" src="images/pacman.png" alt="pacman bitmap" />
+		<span style="font-size: smaller; vertical-align: middle;">&rarr;&nbsp;&rarr;&nbsp;&rarr;</span>
+	</div>
+	
+	<pre class="longcode"><code class="kotlin">
+// example sprite with frame-rate-independent movement
+class Sprite {
+	<em>var dx: Float</em>
+	<em>var dy: Float</em>
+	...
+	fun move(fps: Int) {
+		<em>x += dx / fps</em>
+		<em>y += dy / fps</em>
+	}
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>Sprite animation / walk cycle</h1>
+
+	<div class="figuresright">
+		<img src="images/game-walk-cycle-mario.png" alt="mario walk cycle" /> <br />
+		<img src="images/game-walk-cycle-guybrush-threepwood.png" alt="guybrush threepwood walk cycle" /> <br />
+		<img src="images/game-walk-cycle-simon-belmont.gif" alt="simon belmont walk cycle" /> <br />
+		<img src="images/game-walk-cycle-mega-man.gif" alt="mega man walk cycle" />
+	</div>
+
+	<ul>
+		<li>Make the sprite change image as it animates (a "<strong>walk cycle</strong>"):
+			<ul>
+				<li>Store a list of bitmap images to display.
+					<ul>
+						<li>Cycle through the images in the list by remembering a current index.
+					</ul>
+
+				<li>Don't change images every frame; too fast.
+
+				<li>Bitmaps may change based on game state.
+					<ul>
+						<li>Example: Change direction;  get shot;  get powerup.
+					</ul>
+
+				<li>GSprite: <code>bitmaps</code>, <code>framesPerBitmap</code>
+			</ul>
+	</ul>
+</section>
+
+<section>
+	<h1>Sprite with walk cycle</h1>
+
+	<pre><code class="kotlin">
+// example sprite with walk cycle of bitmaps
+class Sprite {
+	var bitmaps: ArrayList&lt;Bitmap&gt;()
+	var bitmapIndex = 0
+	var frame = 0
+	val framesPerBitmap = 10
+	...
+	fun move() {
+		frame++
+		if (frame % framesPerBitmap == 0) {
+			// move to next bitmap in cycle
+			bitmapIndex = (bitmapIndex + 1) % bitmaps.size()
+		}
+	}
+	
+	fun draw(canvas: Canvas) {
+		canvas.drawBitmap(bitmaps[bitmapIndex], x, y, null)
+	}
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>Image strips</h1>
+
+	<div class="figuresright">
+		<img src="images/game-image-strip.gif" alt="image strip" />
+	</div>
+
+	<ul>
+		<li>Loading lots of small images can be slow.
+
+		<li><strong>image strip</strong>: Many images in one large file.
+			<ul>
+				<li>Can load it just once and then chop it apart.
+				<li>Code is a bit more complex, but load/run time is very fast.
+
+		<li>In Android's <code class="androidapi" data-class="android.graphics.Bitmap">Bitmap</code> class:
+<pre><code class="kotlin">
+fun createBitmap(
+	source: Bitmap,
+	x: Int, y: Int,
+	width: Int, height: Int): Bitmap
+</code></pre>
+		
+		Extracts the given sub-range of pixels of this bitmap
+		as its own bitmap and returns it.
+	</ul>
+</section>
+
+<section>
+	<h1>Collision detection</h1>
+
+	<ul>
+		<li><strong>collision detection</strong>: Determining whether sprites in the game world are touching each other (and reacting accordingly).
+			<ul>
+				<li>You can calculate whether two sprites have collided by seeing whether their bounds overlap.
+			</ul>
+		
+		<li>Android's <code class="androidapi" data-class="android.graphics.RectF">RectF</code> and other shapes have methods to check whether they touch:
+			<ul>
+				<li><code><var>rect1</var>.contains(<var>x</var>, <var>y</var>)</code>
+				<li><code><var>rect1</var>.contains(<var>rect2</var>)</code>
+				<li><code>RectF.intersects(<var>rect1</var>, <var>rect2</var>)</code>
+				<li><code>GSprite</code>: <code>collidesWith</code>
+			</ul>
+	</ul>
+	
+	<div class="figure">
+		<img src="images/collision-detection-rectangles.png" alt="collision detection rectangles" />
+	</div>
+</section>
+
+<section>
+	<h1>Sprite with collision detection</h1>
+
+	<ul>
+		<li>Suggested: Have sprite represent its bounds as a rectangle.
+			<ul>
+				<li>The rectangle object will know if it hits another sprite.
+			</ul>
+	</ul>
+	
+	<div class="figuresright">
+		<img src="images/collision-rect-pacman.png" alt="collision detection rectangles pacman" style="max-width: 3em" />
+	</div>
+
+	<pre><code class="kotlin">
+// example sprite with explicit collision rectangle
+class Sprite {
+	var collisionBounds = RectF()
+	...
+	fun move() {
+		bounds.left += dx
+		bounds.top  += dy
+	}
+	
+	// Returns true if this sprite overlaps with the given other sprite.
+	fun collidesWith(other: Sprite): Boolean {
+		return RectF.intersects(collisionBounds, other.collisionBounds)
+	}
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>Collision margin</h1>
+
+	<div class="figuresright">
+		<img src="images/collision-detection-1.png" alt="collision detection rectangles" style="max-width: 5em" /> <br />
+		<img src="images/collision-detection-3.png" alt="collision detection rectangles" style="max-width: 5em" /> <br />
+		<img src="images/collision-margin-pacman.png" alt="collision detection rectangles" style="max-width: 3em" />
+	</div>
+
+	<ul>
+		<li>Collisions are harder to compute for non-rectangular sprites.
+			<ul>
+				<li>Don't want the empty edges to collide.
+				<li>Even for rectangular shapes, it can be preferable to have a bit of collision "slack".
+			</ul>
+		
+		<li>Some games use a collision rectangle smaller than the overall bounding box to give the collisions a bit of lenience.
+			<ul>
+				<li><code>GSprite</code>: <code>setCollisionMargin</code>
+			</ul>
+	</ul>
+</section>
+
+<section>
+	<h1>Common collision bug</h1>
+
+	<div class="figuresright">
+		<img src="images/collision-high-velocity.png" alt="collision detection at high velocity" /> <br />
+		<img src="images/collision-high-velocity-convex-hull.png" alt="collision detection with convex hull" />
+	</div>
+
+	<ul>
+		<li>When an object moves at high velocity, it may wrongly "jump through" a sprite it ought to collide with.
+		
+		<li>Several possible fixes to this issue:
+			<ul>
+				<li>perform <strong>more/smaller "updates"</strong> per frame of animation to effectively reduce velocity
+				
+				<li>use a <strong>merged "convex hull" collision shape</strong> that bounds the old and new position of the moving shape
+				
+				<li>temporarily <strong>enlarge collision rectangles</strong> for some fast-moving sprites
+				
+				<li>use a proper <strong>physics engine</strong>, vectors, etc. for game movement
+					<ul>
+						<li>most professional-quality game engines will help you address this issue in some way
+					</ul>
+			</ul>
+			
+	</ul>
+</section>
+
+<section>
+	<h1>
+		GSprite methods (<a class="popup" href="http://web.stanford.edu/class/cs193a/lib/javadoc/stanford/androidlib/graphics/GSprite.html">link</a>)
+		<img class="stanfordliblogo" src="images/stanford-logo-icon.png" alt="figure" />
+	</h1>
+
+	<table class="methodtable compacttable">
+		<tr>
+			<th>Method</th>
+			<th>Description</th>
+		</tr>
+		
+		<tr>
+			<td><code>GSprite(...)</code></td>
+			<td>initializes a new sprite with given shape, coords</td>
+		</tr>
+		
+		<tr>
+			<td><strong>canvas:</strong> <code>addTo(GCanvas)</code>, <code>remove()</code></td>
+			<td>adds/removes sprite from screen</td>
+		</tr>
+		
+		<tr>
+			<td><strong>collisions:</strong> <code>collidesWith(sprite)</code>, <code>isCollidable</code>, <code>get/setCollisionMarginTop/Bottom/Left/Right/X/Y()</code></td>
+			<td>returns true if two sprites touch each other; sets collision margin to reduce collisions</td>
+		</tr>
+		
+		<tr>
+			<td><strong>location:</strong> <code>get/setX/Y</code>, <code>get/setLocation()</code>, <code>bound()</code>, <code>boundHorizontal/Vertical()</code>, <code>isInBounds()</code>, <code>moveTo(x</code>, <code>y)</code>, <code>translate(dx</code>, <code>dy)</code></td>
+			<td>where the sprite is on the screen</td>
+		</tr>
+		
+		<tr>
+			<td><strong>size:</strong> <code>get/setWidth/Height/Size/Bounds</code></td>
+			<td>size of sprite on screen</td>
+		</tr>
+		
+		<tr>
+			<td><strong>color:</strong> <code>get/setColor</code>, <code>Paint</code>, <code>get/setFillColor</code>, <code>is/setFilled</code></td>
+			<td>color for sprites that are shapes</td>
+		</tr>
+		
+		<tr>
+			<td><strong>velocity:</strong> <code>get/setVelocity</code>, <code>flipVelocity/X/Y</code>, <code>isMoving</code>, <code>moveBy(dx</code>, <code>dy)</code></td>
+			<td>whether the sprite will move on each update()</td>
+		</tr>
+		
+		<tr>
+			<td><strong>acceleration:</strong> <code>get/setAcceleration/X/Y()</code></td>
+			<td>whether velocity will change on each update()</td>
+		</tr>
+		
+		<tr>
+			<td><strong>bitmaps:</strong> <code>get/setBitmaps</code>, <code>scale</code>, <code>get/setFramesPerBitmap</code>, <code>isSetLoopBitmaps</code></td>
+			<td>images to draw on the sprite; if multiple images are passed, can cycle between them/animate</td>
+		</tr>
+		
+		<tr>
+			<td><strong>extras:</strong> <code>get/setExtra(s)</code>, <code>hasExtra</code>, <code>clearExtras</code></td>
+			<td>pack "extra" data inside a sprite for convenience</td>
+		</tr>
+	</table>
+</section>
+
+<section>
+	<h1>Different screen sizes</h1>
+
+	<div class="figuresright">
+		<img src="images/android-device-screen-sizes.png" alt="device screen sizes" /> <br />
+	</div>
+
+	<ul>
+		<li>Android devices come in a variety of screen sizes and shapes.
+			<ul>
+				<li>A game should run on a variety of devices.
+			</ul>
+		
+		<li>Some ways to handle device sizing:
+			<ul>
+				<li>Scale your bitmaps/coordinates relative to view's width, height
+				
+				<pre><code class="kotlin">
+val bmp = Bitmap.createScaledBitmap(<var>bitmap</var>, <var>width</var>, <var>height</var>)
+</code></pre>
+				<li>
+					<div class="figuresright">
+						<img src="images/double-buffer.png" alt="painting onto a backing buffer" />
+					</div>
+
+					Draw onto a <em class="term">backing buffer</em> and then scale the buffer to fit the screen
+
+				<pre><code class="kotlin">
+val buffer = Bitmap.createBitmap(
+		<var>width</var>, <var>height</var>,
+		Bitmap.Config.ARGB_8888)
+</code></pre>
+			</ul>
+	</ul>
+</section>
+
+<section>
+	<h1>Double buffering</h1>
+
+	<ul>
+		<li><strong>double buffering</strong>: Drawing all individual shapes/sprites onto an auxiliary image first, then drawing that image onto the screen.
+	</ul>
+
+	<div class="figuresright">
+		<img src="images/double-buffer.png" alt="painting onto a backing buffer" />
+	</div>
+
+	<pre><code class="kotlin">
+// hypothetical code to draw onto buffer
+val bmp = Bitmap.createBitmap(
+    width, height, Bitmap.Config.ARGB_8888)
+val canvas = Canvas(bmp)
+for (sprite in mySprites) {
+    sprite.draw(bmpCanvas)
+}
+...
+
+override fun onDraw(canvas: Canvas?) {
+	// scale the buffer and draw it onto the screen
+	val src = RectF(0, 0, bmp.width, bmp.height)
+	val dst = RectF(0, 0, width, height)
+	canvas?.drawBitmap(bmp, src, dst, null)
+</code></pre>
+</section>
+
+<section>
+	<h1>"Mouse" (touch) events</h1>
+
+	<ul>
+		<li><strong>old mouse events:</strong> a physical mouse attached to a device
+			<ul>
+				<li>types: button press, release;  cursor moved;  drag;  enter/exit;  hover
+			</ul>
+		
+		<li><strong>new touch events:</strong> a finger touching the screen
+			<ul>
+				<li>types: button press, release;  drag
+				<li>mouse movement, hovering largely absent
+				<li>multi-touch input now possible  (not covered today)
+			</ul>
+	</ul>
+	
+	<div class="figureshorizontal">
+		<img src="images/mouse1.jpg" alt="mouse old" style="margin-right: 2em" />
+		<img src="images/touch-phone-1.jpg" alt="mobile phone touch" />
+	</div>
+</section>
+
+<section>
+	<h1>Mouse touch events</h1>
+
+	<ul>
+		<li>To handle finger presses from the user, call <code>setOnTouchListener</code> in your canvas or custom view class.
+			<ul>
+				<li>accepts a lambda that takes two params: the view touched, and an event object
+				<li>action types: <code>ACTION_DOWN</code>, <code>ACTION_UP</code>, <code>ACTION_MOVE</code>, ...
+			</ul>
+	</ul>
+
+	<pre><code class="kotlin">
+// handle touch events
+setOnTouchListener { _, event -&gt;
+	val x = event.x
+	val y = event.y
+	if (event.action == MotionEvent.ACTION_DOWN) {
+		// user pressed finger down
+		...
+	}
+	true   // return true
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>Mouse event handling</h1>
+
+	<ul>
+		<li>Typically you don't draw sprites or handle much in a mouse event handler.
+		<li>Instead, remember the user 's action; use it in your next animation "tick" frame update.
+	</ul>
+
+	<pre><code class="kotlin">
+// handle
+setOnTouchListener { _, event -&gt;
+	if (event.action == MotionEvent.ACTION_DOWN) {   // finger press
+		if (event.x &lt; width / 2) {
+			car.velocityX = -10f   // will move left
+		} else {
+			car.velocityX = 10f    // will move right
+		}
+	} else if (event.action == MotionEvent.ACTION_UP) { // finger lift
+		car.velocityX = 0f
+	}
+	true   // return true
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>Keyboard events</h1>
+
+	<ul>
+		<li>Most Android devices do not have physical keyboards!
+			<ul>
+				<li>If they do, it's likely an external device and not always attached.
+				<li>Onscreen keyboard generates events, but it's flaky and usually hidden.
+			</ul>
+		
+		<li>Therefore, no app should ever use keyboard input for a critical part of its UI.
+			<ul>
+				<li>Should always provide a mouse/touch / other method of input.
+				<li>Keyboard events are mostly for testing on a PC or dev machine.
+			</ul>
+	</ul>
+
+	<div class="figureshorizontal">
+		<img src="images/keyboard1.png" alt="keyboard" style="margin-right: 2em" />
+		<img src="images/keyboard2.jpg" alt="keyboard" />
+	</div>
+</section>
+
+<section>
+	<h1>Keyboard events</h1>
+
+	<p>
+		If you want to handle key presses (if the device has a keyboard):
+	</p>
+	
+	<ul>
+		<li>set your app to receive keyboard "focus" in <code>View</code>'s constructor:
+		
+		<pre><code class="kotlin">
+requestFocus()
+focusableInTouchMode = true
+</code></pre>
+		
+		<li>write onKeyDown/Up listener methods in your custom <code>View</code> class.
+			<ul>
+				<li>each key has a "code" such as <code>KeyEvent.KEYCODE_ENTER</code>
+				<li>call <code>setOnKeyListener</code>, pass a lambda taking 3 params: view, key code, event
+			</ul>
+		
+		<pre><code class="kotlin">
+setOnKeyListener { _, keyCode, event ->
+	// ...
+}
+</code></pre>
+	</ul>
+</section>
+
+<section>
+	<h1>Enemy AI</h1>
+
+	<div class="figuresright">
+		<img src="images/pacman-ghost.png" alt="a Pac-Man ghost" />
+	</div>
+
+	<ul>
+		<li>Many games have enemy characters with some kind of behavior or AI.
+			<ul>
+				<li>Can be implemented in several ways.
+			</ul>
+		
+		<li><strong>strategy pattern:</strong> Making small objects to represent different AI styles/strategies.
+		
+		<pre><code class="kotlin">
+// hypothetical class hierarchy to handle various ghost behaviors
+class AggressiveStrategy: GhostStrategy() {
+	public void decideMove() { ... }
+}
+...
+myGhost.strategy = AggressiveStrategy()
+</code></pre>
+	</ul>
+</section>
+
+<section>
+	<h1>OpenGL ES</h1>
+
+	<div class="figuresright">
+		<img src="images/opengl-es.png" alt="OpenGL ES logo" />
+	</div>
+
+	<ul>
+		<li><strong>OpenGL:</strong> Open standard graphics package supported on many computers and devices.
+			Commonly used for 3D graphics.
+			<ul>
+				<li>hardware-accelerated  (uses GPU, not CPU)
+				<li>widely supported, freely available
+			</ul>
+		
+		<li>Android devices include a version of OpenGL for embedded systems ("ES").
+			<ul>
+				<li>class MyGLRenderer : GLSurfaceView.Renderer { ...
+			</ul>
+		
+		<li>in past, provided big performance boost, even in 2D.
+			<ul>
+				<li>In more recent Android versions, standard <code>Canvas</code> uses OpenGL, too.
+				<li>Now <code>Canvas</code> is often faster than explicitly using OpenGL ES for 2D.
+				<li>Therefore, OpenGL ES is not covered here.
+			</ul>
+	</ul>
+</section>
+
+<section>
+	<h1>Android Game Libraries</h1>
+
+	<ul>
+		<li>
+			<div class="figuresright">
+				<img src="images/unity-1.png" alt="Unity logo" />
+			</div>
+			<strong>Unity:</strong> Popular cross-platform game platform.
+			<ul>
+				<li><a class="popup" href="http://unity3d.com/">http://unity3d.com/</a>
+				<li>(comprehensive, deploys to many platforms)
+			</ul>
+		
+		<li>
+			<div class="figuresright">
+				<img src="images/libgdx.png" alt="libgdx" />
+			</div>
+			<strong>libgdx:</strong> Another cross-platform game lib based on OpenGL.
+			<ul>
+				<li><a class="popup" href="https://github.com/libgdx/libgdx/">https://github.com/libgdx/libgdx/</a>
+				<li>(in my opinion, a bit bare)
+			</ul>
+		
+		<li>
+			<div class="figuresright">
+				<img src="images/google-play-games-services.png" alt="libgdx" />
+			</div>
+			<strong>Google Play Games Services:</strong> Set of libraries made by Google for social gaming features.
+			<ul>
+				<li><a href="https://developers.google.com/games/services/">https://developers.google.com/games/services/</a>
+				<li>Achievements, High Scores/Leaderboard, Network Multiplayer
+			</ul>
+	</ul>
+</section>
+
+<section>
+	<h1>Pros/cons of game frameworks</h1>
+
+	<ul>
+		<li>You don't even have to code in Java or Kotlin!
+			<ul>
+				<li>Cocos2d-x:  C++, JavaScript
+				<li>Unity: C# and others
+				<li>Skia: Python
+				<li>Xamarin: C#
+			</ul>
+		
+		<li>Have their own editing software (not Android Studio)
+		
+		<li>Many are cross-platform and deploy (mostly) the same game code to multiple platforms
+			<ul>
+				<li>code game once and deploy it on web, Android, iOS, etc.
+			</ul>
+	</ul>
+</section>
+
+<section>
+	<h1>WakeLock</h1>
+
+	<div class="figuresright">
+		<img src="images/lock-screen.png" alt="lock screen" style="max-width: 4em" />
+	</div>
+
+	<ul>
+		<li>To prevent screen from blanking, use a wake lock.
+
+		<li>in <span class="filename">AndroidManifest.xml</span>:
+			<pre class="nolinenumbers"><code class="xml">
+&lt;uses-permission
+	android:name=&quot;android.permission.WAKE_LOCK&quot; /&gt;
+</code></pre>
+
+		<li>in app's activity Kotlin code:
+			<pre><code class="kotlin">
+// create the lock (probably in onCreate)
+val pwr = getSystemService(POWER_SERVICE) as PowerManager
+val lock = pwr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+		"my lock")
+
+// turn on the lock (in onResume)
+lock.acquire()
+
+// turn off the lock (in onPause)
+lock.release()
+</code></pre>
+	</ul>
+</section>
+
+<section>
+	<h1>Full screen mode</h1>
+
+	<ul>
+		<li>To put an app (e.g. a game) into full screen mode, which hides the notifications and status bar, put the following in your activity's <code>onCreate</code> method:
+	</ul>
+
+<pre><code class="kotlin">
+requestWindowFeature(Window.FEATURE_NO_TITLE)
+window.setFlags(
+		WindowManager.LayoutParams.FLAG_FULLSCREEN,
+		WindowManager.LayoutParams.FLAG_FULLSCREEN)
+</code></pre>
+</section>
+
+<!-- END SLIDES AREA -->
+			</div>
+		</div>
+
+		<script src="highlightjs/highlight.pack.js" charset="utf-8"></script>
+		<script src="cs193a-slides.js"></script>
+		<script src="reveal/js/reveal.js"></script>
+		<script>
+			initializeSlides();
+		</script>
+	</body>
+</html>

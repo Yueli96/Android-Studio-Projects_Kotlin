@@ -1,0 +1,804 @@
+<html>
+	<head>
+		<title>CS 193A - User Login</title>
+		<link rel="stylesheet" href="highlightjs/styles/default.css">
+		<link rel="stylesheet" href="reveal/css/reveal.css">
+		<link rel="stylesheet" href="reveal/css/theme/white.css">
+		<link rel="stylesheet" href="cs193a-slides.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+
+<!-- BEGIN SLIDES AREA -->
+
+<section class="titleslide">
+	<h1>CS 193A</h1>
+
+	<p>User Login</p>
+</section>
+
+<section>
+	<h1>Authentication</h1>
+	
+	<p>
+		Most apps require users to have an <strong>account</strong> or <strong>log in</strong>.
+	</p>
+	
+	<div class="figuresright">
+		<img src="images/authentication.png" alt="figure" />
+	</div>
+	
+	<ul>
+		<li><strong>authentication:</strong> Logging in / verifying identity of a user.
+			<ul>
+				<li>"Who is this user?"
+			</ul>
+		
+		<li><strong>authorization:</strong> Granting / denying permissions for various actions.
+			<ul>
+				<li>"What is this user allowed to do?"
+			</ul>
+		
+		<li>many ways to do this:
+			<ol>
+				<li>write your own auth code from scratch
+				<li>use a library that helps you create users and accounts
+				<li>use a third-party auth system that leverages accounts from another site
+			</ol>
+	</ul>
+</section>
+
+<section>
+	<h1>1) Writing Your Own Auth</h1>
+	
+	<div class="sqltables">
+		<table class="sqltable">
+			<caption>students</caption>
+			<tr><th>id</th><th>name</th><th>email</th><th class="highlight">password</th></tr>
+			<tr><td>123</td><td>Bart</td><td>bart@fox.com</td><td class="highlight">bartman</td></tr>
+			<tr><td>456</td><td>Milhouse</td><td>milhouse@fox.com</td><td class="highlight">nixon</td></tr>
+			<tr><td>888</td><td>Lisa</td><td>lisa@fox.com</td><td class="highlight">vegan</td></tr>
+			<tr><td>404</td><td>Ralph</td><td>ralph@fox.com</td><td class="highlight">catfood</td></tr>
+		</table>
+	</div>
+	
+	<ul>
+		<li><strong>do it yourself:</strong> Write code to ask for a user name/password.
+			<ul>
+				<li><code>if (password == correctPassword) { ... }</code>
+				<li>auth code is hard to write perfectly!
+				<li>must encrypt user data securely in database (unlike the above)
+				<li>must use secure protocols, HTTPS, etc.
+				<li>if server hacked, users get mad
+				<li><strong>Do not do this.</strong>
+			</ul>
+	</ul>
+</section>
+
+<section>
+	<h1>Encrypted Passwords</h1>
+	
+	<div class="sqltables">
+		<table class="sqltable">
+			<caption>students</caption>
+			<tr><th>id</th><th>name</th><th>email</th><th class="highlight">passwordhash</th></tr>
+			<tr><td>123</td><td>Bart</td><td>bart@fox.com</td><td class="highlight"><small>973A75AA8A05AF6F8AB00DD055246E911C24142FD4BAFFFC18D08F103DDE516F</small></td></tr>
+			<tr><td>456</td><td>Milhouse</td><td>milhouse@fox.com</td><td class="highlight"><small>B85BAAEF536E67019D6247F640E024D30DE0A09F6E06E0B5F46FA888B2B0D9F8</small></td></tr>
+			<tr><td>888</td><td>Lisa</td><td>lisa@fox.com</td><td class="highlight"><small>1F10711A285FD3CC3ADE7CCECCC0A5C1A9E96BAAD965E8E30DD4200646CAC47C</small></td></tr>
+			<tr><td>404</td><td>Ralph</td><td>ralph@fox.com</td><td class="highlight"><small>708730AB8DC65C819F68BF5F31798DEE15AA3147B2D3048CA96F944E0B78B9A4</small></td></tr>
+		</table>
+	</div>
+	
+	<ul>
+		<li>better for database table to store encrypted <strong>hashes</strong> of passwords
+			<ul>
+				<li><strong>one-way hash:</strong> cleartext (plain) &rarr; cyphertext (encrypted)
+				<li><code>if (<em>hash(</em>password<em>)</em> == correctPasswordHash) { ... }</code>
+				<li>above example: <a class="popup" href="https://passwordsgenerator.net/sha256-hash-generator/">SHA-256</a> (SHA-512 even better)
+				<li>even better is to randomly "salt" the hashes (<a class="popup" href="https://auth0.com/blog/adding-salt-to-hashing-a-better-way-to-store-passwords/">more info</a>)
+				<li>in Kotlin: use <code class="javaapi" data-class="java.security.MessageDigest">MessageDigest</code> (<a class="popup" href="https://www.baeldung.com/sha-256-hashing-java">tutorial</a>)
+				<li>You probably <em>still</em> don't want to do this.
+			</ul>
+	</ul>
+</section>
+
+<section>
+	<h1>2) Using Firebase for Auth</h1>
+	
+	<div class="figuresright">
+		<img src="images/firebase-authentication-logo.png" alt="figure" />
+	</div>
+	
+	<ul>
+		<li><strong>Firebase authentication:</strong> Firebase provides a login component.
+			Two flavors:
+			<ol>
+				<li>FirebaseUI - The entire look/feel of the auth system is provided by Firebase.
+				<li>Firebase Authentication SDK - Methods are provided for creating users in Firebase and signing them in, but you have to write the UI to handle everything.
+			</ol>
+	</ul>
+</section>
+
+<section>
+	<h1>Firebase auth setup</h1>
+	
+	<ul>
+		<li>in Android Studio, <strong>Tools</strong> &rarr; <strong>Firebase</strong> &rarr; <strong>Authentication</strong> to set up
+		<li>modify app's <span class="filename">build.gradle</span>
+			
+			<pre class="longcode nolinenumbers"><code class="groovy">
+dependencies {
+	api "com.google.android.gms:play-services-base:16.1.0"
+	<em>api "com.google.android.gms:play-services-auth:16.0.1"</em>
+	api "com.google.android.gms:play-services-identity:16.0.0"
+
+	implementation "com.google.firebase:firebase-core:16.0.7"
+	<em>implementation "com.google.firebase:firebase-auth:16.1.0"</em>
+	implementation "com.google.firebase:firebase-database:16.1.0"
+
+	...
+}
+</code></pre>
+	</ul>
+</section>
+
+<section>
+	<h1>Firebase auth: create user</h1>
+	
+	<ul>
+		<li>prompt for user's email and password in app's UI
+		<li>write code to create a user account:
+		
+			<pre><code class="kotlin">
+// MyActivity.kt
+private lateinit var auth: FirebaseAuth
+...
+
+// in onCreate method: connect to Firebase
+FirebaseApp.initializeApp(this)
+...
+
+// when user clicks to create account
+auth = FirebaseAuth.getInstance()
+auth.createUserWithEmailAndPassword("<var>username</var>", "<var>password</var>")
+	.addOnCompleteListener { task ->
+		if (task.isSuccessful) {
+			// account creation was successful
+			...
+		} else {
+			// account creation failed; print task.exception to learn more
+			...
+		}
+	}
+</code></pre>
+	</ul>
+</section>
+
+<section>
+	<h1>Firebase auth: sign in</h1>
+	
+	<ul>
+		<li>write code to sign in an existing user account:
+		
+			<pre><code class="kotlin">
+// when user clicks to sign in
+auth = FirebaseAuth.getInstance()
+<em>auth.signInWithEmailAndPassword</em>("<var>email</var>", "<var>password</var>")
+	.addOnCompleteListener { task ->
+		if (task.isSuccessful) {
+			// sign-in was successful
+			...
+		} else {
+			// sign-in failed; print task.exception to learn more
+			...
+		}
+	}
+</code></pre>
+	</ul>
+</section>
+
+<section>
+	<h1>3) Using Auth Services</h1>
+	
+	<div class="figuresright">
+		<img src="images/sign-in-with-google.png" alt="figure" />
+	</div>
+	
+	<ul>
+		<li><strong>use an external auth service:</strong> Rely on an outside entity for auth.
+			<ul>
+				<li>Google account, Facebook, Microsoft, GitHub, PayPal, ...
+					<ul>
+						<li>+ easier
+						<li>+ secure
+						<li>+ users trust these companies (sometimes)
+						<li>- introduces a dependency
+						<li>- requires users to have an account on that service
+						<li>- reduced privacy (company knows about your users)
+					</ul>
+			</ul>
+	</ul>
+</section>
+
+<section>
+	<h1>Auth Providers w/ Firebase</h1>
+	
+	<ul>
+		<li>Firebase has helpful integration with many login providers:
+	</ul>
+	
+	<div class="figures">
+		<img src="images/firebase-signin-providers.png" alt="figure" />
+	</div>
+</section>
+
+<section>
+	<h1>Google Sign-In</h1>
+	
+	<div class="figuresright">
+		<img src="images/sign-in-button.png" alt="figure" />
+		<img src="images/oauth.png" alt="figure" />
+	</div>
+	
+	<ul>
+		<li><strong>Google Sign-In:</strong>
+			Services provided by Google to help integrate accounts and login into apps.
+			<ul>
+				<li>sometimes called "Google Identity Platform"
+				<li>built on top of OAuth
+			</ul>
+		
+		<li><strong><a class="popup" href="https://oauth.net/">OAuth:</a></strong> Open standard for authorization features.
+			<ul>
+				<li>current version: <strong>OAuth 2.0</strong>
+			</ul>
+	</ul>
+</section>
+
+<!--
+<section>
+	<h1>Preparing your emulator</h1>
+	
+	<ul>
+		<li>to use Google Sign-in, must install <strong>Google Play Services</strong> in emulator
+		<li>in A.Studio:  "<strong>SDK Manager</strong>"
+			<img class="icon" src="images/sdk-manager-toolbar-icon.png" alt="figure" title="SDK Manager" />
+			<ul>
+				<li>make sure "<strong>Google APIs</strong>" are installed
+			</ul>
+		<li>in A.Studio: "<strong>AVD Manager</strong>"
+			<img class="icon" src="images/avd-manager-toolbar-icon.png" alt="figure" title="AVD Manager" />
+			<ul>
+				<li>make sure your AVD uses "Google APIs"
+				<li>if not, click "pencil" icon to change it
+			</ul>
+	</ul>
+
+	<div class="figure">
+		<img src="images/avd-google-apis.png" alt="figure" />
+	</div>
+</section>
+-->
+
+<section>
+	<h1>Access key and config file</h1>
+
+	<ul>
+		<li>must get <strong>API access key</strong> and <strong>configuration file</strong> for project
+		<li>go to <a class="popup" href="https://developers.google.com/identity/sign-in/android/">https://developers.google.com/identity/sign-in/android/</a>
+		<li>click "Get Started" &rarr; "Get a Configuration File"
+			<ul>
+				<li><u>crucial</u>: must set correct <strong>package</strong> (same as in Kotlin code)
+				<li>e.g. <code>"package <strong><u>edu.stanford.cs193a.logintest</u></strong>"</code>
+			</ul>
+		<li>get an <a class="popup" href="https://developers.google.com/android/guides/client-auth">SHA-1 key file</a> (requires using Terminal) :-/
+	
+	<div class="figure">
+		<img src="images/google-signin-create-app.png" alt="figure" />
+	</div>
+</section>
+
+<section>
+	<h1>Download .json file</h1>
+	
+	<ul>
+		<li>you need to generate/download a file <span class="filename">google-services.json</span>
+			<ul>
+				<li>Your app sends this to Google's server to get permission to use the API.
+			</ul>
+
+		<li>save it into your app's <span class="filename">app/</span> directory
+		<li>will not work if in wrong folder or stores wrong app name/package
+		<li><em>NOTE:</em> be careful storing such a file in GitHub / online (has private keys in it!)
+	</ul>
+	
+	<div class="figure">
+		<img src="images/google-signin-download-json.png" alt="figure" />
+	</div>
+</section>
+
+<section>
+	<h1>Add Google Sign-in to project</h1>
+	
+	<ul>
+		<li>in <strong>project</strong> level <span class="filename">build.gradle</span> file:
+		
+		<pre><code class="groovy">
+buildscript { ...
+	dependencies { ...
+		<em>classpath 'com.google.gms:google-services:4.2.0'</em>  // add this line!
+</code></pre>
+
+		<li>in <strong>app</strong> level <span class="filename">build.gradle</span> file:
+		
+		<pre><code class="groovy">
+dependencies { ...
+	<em>api "com.google.android.gms:play-services-auth:16.0.1"</em>  // add this line!
+}
+
+// put this at the very BOTTOM of the file!
+<em>apply plugin: "com.google.gms.google-services"</em>  // add this line!
+</code></pre>
+
+		<li>then "Sync Now"
+	</ul>
+</section>
+
+<section>
+	<h1>Sign-In button (optional)</h1>
+	
+	<div class="figuresright">
+		<img src="images/signin-button-layout.png" alt="figure" />
+	</div>
+	
+	<pre><code class="xml">
+&lt;!-- res/layout/activity_?.xml --&gt;
+&lt;android.support.constraint.ConstraintLayout ...&gt;
+
+	<em>&lt;com.google.android.gms.common.SignInButton</em>
+		android:id=&quot;@+id/sign_in_button&quot;
+		android:layout_width=&quot;wrap_content&quot;
+		android:layout_height=&quot;wrap_content&quot; /&gt;
+
+&lt;/android.support.constraint.ConstraintLayout&gt;
+</code></pre>
+
+	<ul>
+		<li>Note: Can't listen to events using <code>onClick</code> (must attach in Kotlin code)
+	</ul>
+</section>
+
+<section>
+	<h1>Initialize Google API</h1>
+	
+	<pre><code class="kotlin">
+// MyActivity.kt
+private lateinit var google: GoogleSignInClient
+
+override fun onCreate(bundle: Bundle?) {
+	...
+	// request the user's ID, email address, and basic profile
+	val options = <em>GoogleSignInOptions.Builder</em>(
+					GoogleSignInOptions.DEFAULT_SIGN_IN)
+			.requestEmail()
+			.build()
+
+	// build API client with access to Sign-In API and options above
+	<em>google = GoogleSignIn.getClient(this, options)</em>
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>Initiating sign-in process</h1>
+	
+	<div class="figuresright">
+		<img src="images/google-sign-in-popup.png" alt="figure" />
+	</div>
+	
+	<ul>
+		<li>to do a login, start an activity using an intent created as follows:
+	</ul>
+	
+	<pre><code class="kotlin">
+// MyActivity.kt
+private val REQUEST_SIGN_IN_GOOGLE = 1932
+...
+
+// when your SignInButton is clicked
+<em>startActivityForResult(google.signInIntent,
+	REQUEST_SIGN_IN_GOOGLE)</em>
+</code></pre>
+	
+	<ul>
+		<li>An activity like the one at right will appear.
+	</ul>
+</section>
+
+<section>
+	<h1>Completing sign-in process</h1>
+	
+	<div class="figuresright">
+		<img src="images/google-sign-in-popup-cropped.png" alt="figure" />
+	</div>
+	
+	<ul>
+		<li>when sign-in activity returns, examine its result:
+	</ul>
+
+	<pre><code class="kotlin">
+override fun onActivityResult(requestCode: Int,
+		resultCode: Int, intent: Intent?) {
+	
+	super.onActivityResult(requestCode, resultCode, intent)
+	if (requestCode == REQUEST_SIGN_IN_GOOGLE) {
+		if (resultCode == Activity.RESULT_OK) {
+			// successfully signed in
+			<em>val account = GoogleSignIn.getSignedInAccountFromIntent(intent).result!!</em>
+			...
+		} else {
+			// sign-in failed
+		}
+	}
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>The GoogleSignInAccount (<a class="popup" href="https://developers.google.com/android/reference/com/google/android/gms/auth/api/signin/GoogleSignInAccount">link</a>)</h1>
+
+	<table class="methodtable boxedtable">
+		<tr>
+			<th>Member</th>
+			<th>Description</th>
+			<th>Example</th>
+		</tr>
+		<tr>
+			<td><code><var>a</var>.displayName</code></td>
+			<td>real name</td>
+			<td><code>"Lisa Simpson"</code></td>
+		</tr>
+		<tr>
+			<td><code><var>a</var>.email</code></td>
+			<td>email address</td>
+			<td><code>"lisas@fox.com"</code></td>
+		</tr>
+		<tr>
+			<td>
+				<code><var>a</var>.familyName</code>, <br />
+				<code><var>a</var>.givenName</code>
+			</td>
+			<td>last and first name</td>
+			<td><code>"Simpson"</code> and <code>"Lisa"</code></td>
+		</tr>
+		<tr>
+			<td><code><var>a</var>.photoUrl</code></td>
+			<td>full URL to a photo of this user, if requested</td>
+			<td><code>"http://www.google.com/...."</code></td>
+		</tr>
+	</table>
+	
+	<pre><code class="kotlin">
+// grab the GoogleSignInAccount for the logged-in user
+<em>val account = GoogleSignIn.getSignedInAccountFromIntent(intent).result!!</em>
+val email = account.email
+val name  = account.displayName
+...
+</code></pre>
+</section>
+
+<section>
+	<h1>Other features</h1>
+	
+	<div class="figuresright">
+		<img src="images/google-sign-in-popup-cropped.png" alt="figure" />
+	</div>
+	
+	<ul>
+		<li>checking whether you are already logged in (e.g. in <code>onStart</code>):
+	</ul>
+
+	<pre><code class="kotlin">
+// see if I am already signed in
+<em>val account = GoogleSignIn.getLastSignedInAccount(this)</em>
+if (account != null) {
+	// then I am signed in already ...
+}
+</code></pre>
+	
+	<ul>
+		<li>signing out:
+	</ul>
+
+	<pre><code class="kotlin">
+// sign out of the Google Sign-In system
+google.signOut()
+</code></pre>
+</section>
+
+<section data-transition="fade-out">
+	<h1>Facebook Login</h1>
+	
+	<div class="figuresright">
+		<img src="images/facebook-for-developers.png" alt="figure" />
+	</div>
+	
+	<ul>
+		<li>go to <a class="popup" href="http://developers.facebook.com/">developers.facebook.com</a>
+			<ul>
+				<li>create a new app
+				<li>get your app's ID and 'secret' number
+				<li>paste these into Firebase console
+			</ul>
+		<li>go to <a class="popup" href="https://firebase.google.com/">Firebase web console</a> for your project
+			<ul>
+				<li>Project Overview &rarr; Authentication
+				<li>Providers &rarr; Facebook &rarr; Enable
+				<li>paste FB app ID and 'secret' from previous step
+				<li>copy "OAuth redirect URI" and paste back into Facebook app under Products &rarr; Facebook Login &rarr; Settings &rarr; Valid OAuth Redirect URIs
+			</ul>
+	</ul>
+</section>
+
+<section data-transition="fade-in">
+	<h1>Facebook Login</h1>
+	
+	<div class="figure">
+		<img src="images/firebase-signin-provider-facebook.png" alt="figure" />
+	</div>
+</section>
+
+<section>
+	<h1>Facebook auth setup</h1>
+	
+	<pre class="longcode nolinenumbers"><code class="groovy">
+// app's build.gradle file
+dependencies {
+	<em>implementation 'com.firebaseui:firebase-ui-auth:4.3.1'</em>
+	<em>implementation 'com.facebook.android:facebook-login:4.27.0'</em>
+	...
+}
+</code></pre>
+
+	<pre class="longcode nolinenumbers"><code class="groovy">
+// app's gradle.properties file
+<em>android.enableD8=true</em>
+</code></pre>
+
+	<pre class="longcode nolinenumbers"><code class="xml">
+&lt;!-- strings.xml -->
+&lt;resources&gt;
+	<em>&lt;string name=&quot;facebook_application_id&quot; translatable=&quot;false&quot;&gt;<var>YOUR_APP_ID</var>&lt;/string&gt;</em>
+	<em>&lt;string name=&quot;facebook_login_protocol_scheme&quot; translatable=&quot;false&quot;&gt;fb<var>YOUR_APP_ID</var>&lt;/string&gt;</em>
+	...
+</code></pre>
+</section>
+
+<section>
+	<h1>Facebook auth code</h1>
+	
+	<ul>
+		<li>code to sign in a user through their Facebook account:
+		
+			<pre><code class="kotlin">
+// MyActivity.kt
+// constant for request code; just some number from 0-65535
+val REQUEST_SIGN_IN = 1193
+...
+
+// Create and launch sign-in intent;
+// provide a list of all authentication types that are supported
+// (calls onActivityResult when done)
+startActivityForResult(
+	AuthUI.getInstance()
+		.createSignInIntentBuilder()
+		.setIsSmartLockEnabled(false)
+		.setAvailableProviders(arrayListOf(
+			AuthUI.IdpConfig.FacebookBuilder().build()))
+		.build(),
+	REQUEST_SIGN_IN)
+</code></pre>
+	</ul>
+</section>
+
+<section>
+	<h1>Facebook auth code</h1>
+	
+	<ul>
+		<li>code to sign in a user through their Facebook account (continued):
+		
+			<pre><code class="kotlin">
+// MyActivity.kt
+override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+	super.onActivityResult(requestCode, resultCode, data)
+
+	if (requestCode == REQUEST_SIGN_IN) {
+		if (resultCode == Activity.RESULT_OK) {
+			// Successfully signed in!
+			val user = FirebaseAuth.getInstance().currentUser
+			val name = user?.displayName
+			val email = user?.email
+			...
+		} else {
+			// Sign in failed. If response is null the user canceled the
+			// sign-in flow using the back button. Otherwise:
+			
+			val response = IdpResponse.fromResultIntent(data)
+			// Check response.error.errorCode and handle the error.
+			...
+		}
+	}
+}
+</code></pre>
+	</ul>
+</section>
+
+<section>
+	<h1>The FirebaseUser (<a class="popup" href="https://firebase.google.com/docs/reference/android/com/google/firebase/auth/FirebaseUser">link</a>)</h1>
+
+	<table class="methodtable boxedtable">
+		<tr>
+			<th>Member</th>
+			<th>Description</th>
+			<th>Example</th>
+		</tr>
+		<tr>
+			<td><code><var>u</var>.displayName</code></td>
+			<td>real name</td>
+			<td><code>"Lisa Simpson"</code></td>
+		</tr>
+		<tr>
+			<td><code><var>u</var>.email</code></td>
+			<td>email address</td>
+			<td><code>"lisas@fox.com"</code></td>
+		</tr>
+		<tr>
+			<td>
+				<code><var>u</var>.familyName</code>, <br />
+				<code><var>u</var>.givenName</code>
+			</td>
+			<td>last and first name</td>
+			<td><code>"Simpson"</code> and <code>"Lisa"</code></td>
+		</tr>
+		<tr>
+			<td><code><var>u</var>.photoUrl</code></td>
+			<td>full URL to a photo of this user's profile picture</td>
+			<td><code>"http://www.google.com/...."</code></td>
+		</tr>
+		<tr>
+			<td><code><var>u</var>.uid</code></td>
+			<td>unique user ID</td>
+			<td><code>?</code></td>
+		</tr>
+		<tr>
+			<td>
+				<code><var>u</var>.updateEmail(<var>email</var>)</code>, <br />
+				<code><var>u</var>.updatePassword(<var>password</var>)</code>
+			</td>
+			<td>modify settings</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td><code><var>u</var>.delete()</code></td>
+			<td>delete user account</td>
+			<td></td>
+		</tr>
+	</table>
+	
+	<pre><code class="kotlin">
+// grab info out of the user object
+<em>val account = FirebaseAuth.getInstance().currentUser!!</em>
+val email = account.email
+val name  = account.displayName
+...
+</code></pre>
+</section>
+
+<section>
+	<h1>Twitter Login</h1>
+	
+	<div class="figuresright">
+		<img src="images/twitter-for-developers.png" alt="figure" />
+	</div>
+	
+	<ul>
+		<li>go to <a class="popup" href="http://developer.twitter.com/">developer.twitter.com</a>
+			<ul>
+				<li>sign up for a Developer account
+				<li>create a new app; go through many screens and forms
+				<li>get your app's "consumer API keys"
+				<li>paste these into Firebase console
+			</ul>
+		<li>go to <a class="popup" href="https://firebase.google.com/">Firebase web console</a> for your project
+			<ul>
+				<li>Project Overview &rarr; Authentication
+				<li>Providers &rarr; Twitter &rarr; Enable
+				<li>paste Twitter app key and secret key from previous step
+				<li>copy "OAuth redirect URI" and paste back into Twitter app
+			</ul>
+	</ul>
+</section>
+
+<section>
+	<h1>Twitter auth setup</h1>
+	
+	<pre class="longcode nolinenumbers"><code class="groovy">
+// app's build.gradle file
+android {
+	<em>compileOptions {</em>
+		<em>sourceCompatibility JavaVersion.VERSION_1_8</em>
+		<em>targetCompatibility JavaVersion.VERSION_1_8</em>
+	<em>}</em>
+...
+
+dependencies {
+	<em>implementation 'com.firebaseui:firebase-ui-auth:4.3.1'</em>
+	<em>implementation 'com.twitter.sdk.android:twitter-core:3.+'</em>
+	...
+}
+</code></pre>
+
+	<pre class="longcode nolinenumbers"><code class="groovy">
+// app's gradle.properties file
+<em>android.enableD8=true</em>
+</code></pre>
+
+	<pre class="longcode nolinenumbers"><code class="xml">
+&lt;!-- strings.xml -->
+&lt;resources&gt;
+	<em>&lt;string name=&quot;twitter_consumer_key&quot; translatable=&quot;false&quot;&gt;<var>your_consumer_key</var>&lt;/string&gt;</em>
+	<em>&lt;string name=&quot;twitter_consumer_secret&quot; translatable=&quot;false&quot;&gt;<var>your_consumer_secret</var>&lt;/string&gt;</em>
+	...
+</code></pre>
+</section>
+
+<section>
+	<h1>Twitter auth code</h1>
+	
+	<ul>
+		<li>code to sign in a user through their Twitter account:
+		
+			<pre><code class="kotlin">
+// MyActivity.kt
+// constant for request code; just some number from 0-65535
+val REQUEST_SIGN_IN = 1193
+...
+
+// Create and launch sign-in intent;
+// provide a list of all authentication types that are supported
+// (calls onActivityResult when done)
+startActivityForResult(
+	AuthUI.getInstance()
+		.createSignInIntentBuilder()
+		.setIsSmartLockEnabled(false)
+		.setAvailableProviders(arrayListOf(
+			<em>AuthUI.IdpConfig.GoogleBuilder().build(),</em>
+			<em>AuthUI.IdpConfig.TwitterBuilder().build(),</em>
+			<em>AuthUI.IdpConfig.FacebookBuilder().build()</em>))
+		.build(),
+	REQUEST_SIGN_IN)
+</code></pre>
+	</ul>
+</section>
+
+<section>
+	<h1>Twitter auth UI</h1>
+	<div class="figures">
+		<img src="images/twitter-authorize-app.png" alt="figure" />
+	</div>
+</section>
+
+
+<!-- END SLIDES AREA -->
+			</div>
+		</div>
+
+		<script src="highlightjs/highlight.pack.js" charset="utf-8"></script>
+		<script src="cs193a-slides.js"></script>
+		<script src="reveal/js/reveal.js"></script>
+		<script>
+			initializeSlides();
+		</script>
+	</body>
+</html>

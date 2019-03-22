@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>CS 193A - Widgets</title>
+		<link rel="stylesheet" href="highlightjs/styles/default.css">
+		<link rel="stylesheet" href="reveal/css/reveal.css">
+		<link rel="stylesheet" href="reveal/css/theme/white.css">
+		<link rel="stylesheet" href="reveal/css/print/pdf.css" media="print">
+		<link rel="stylesheet" href="cs193a-slides.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+
+<!-- BEGIN SLIDES AREA -->
+
+<section class="titleslide">
+	<h1>CS 193A</h1>
+
+	<p>GUI Widgets</p>
+</section>
+
+<section>
+	<h1>Android widgets</h1>
+	
+	<table class="columns5">
+		<tr>
+			<td><img src="images/widget-analogclock.png" alt="widget" /></td>
+			<td><img src="images/widget-button.png" alt="widget" /></td>
+			<td><img src="images/widget-checkbox.png" alt="widget" /></td>
+			<td><img src="images/widget-datepicker.png" alt="widget" /></td>
+			<td><img src="images/widget-digitalclock.png" alt="widget" /></td>
+		</tr>
+
+		<tr>
+			<td><code class="androidapi" data-class="android.widget.AnalogClock">AnalogClock</code></td>
+			<td><code class="androidapi" data-class="android.widget.Button">Button</code></td>
+			<td><code class="androidapi" data-class="android.widget.CheckBox">CheckBox</code></td>
+			<td><code class="androidapi" data-class="android.widget.DatePicker">DatePicker</code></td>
+			<td><code class="androidapi" data-class="android.widget.DigitalClock" style="margin-left: 0.5em">DigitalClock</code></td>
+		</tr>
+
+		<tr>
+			<td><img src="images/widget-edittext.png" alt="widget" /></td>
+			<td><img src="images/widget-gallery.png" alt="widget" /></td>
+			<td><img src="images/widget-imageview.png" alt="widget" />
+				<img src="images/widget-imagebutton.png" alt="widget" /></td>
+			<td><img src="images/widget-mapview.png" alt="widget" /></td>
+			<td><img src="images/widget-progressbar.png" alt="widget" /></td>
+		</tr>
+
+		<tr>
+			<td><code class="androidapi" data-class="android.widget.EditText">EditText</code></td>
+			<td><code class="androidapi" data-class="android.widget.Gallery">Gallery</code></td>
+			<td><code class="androidapi" data-class="android.widget.ImageView">ImageView</code>/<code class="androidapi" data-class="android.widget.Button">Button</code></td>
+			<td><a class="popup" href="https://developers.google.com/android/reference/com/google/android/gms/maps/MapView"><code data-class="android.gms.maps.MapView">MapView</code></a></td>
+			<td><code class="androidapi" data-class="android.widget.ProgressBar">ProgressBar</code></td>
+		</tr>
+
+		<tr>
+			<td><img src="images/widget-radiobutton.png" alt="widget" /></td>
+			<td><img src="images/spinner.png" alt="widget" /></td>
+			<td><img src="images/widget-textview.png" alt="widget" /></td>
+			<td><img src="images/widget-timepicker.png" alt="widget" /></td>
+			<td><img src="images/widget-webview.png" alt="widget" /></td>
+		</tr>
+
+		<tr>
+			<td><code class="androidapi" data-class="android.widget.RadioButton">RadioButton</code></td>
+			<td><code class="androidapi" data-class="android.widget.Spinner">Spinner</code></td>
+			<td><code class="androidapi" data-class="android.widget.TextView">TextView</code></td>
+			<td><code class="androidapi" data-class="android.widget.TimePicker">TimePicker</code></td>
+			<td><code class="androidapi" data-class="android.webkit.WebView">WebView</code></td>
+		</tr>
+	</table>
+</section>
+
+<section>
+	<h1>
+		Adding a widget
+	</h1>
+
+	<p>
+		To put a widget into your activity, you must do two things:
+	</p>
+	
+	<ol>
+		<li>declare/position it in your <strong>layout XML file</strong>
+
+			<pre><code class="xml">
+&lt;!-- activity_main.xml --&gt;
+&lt;Button ...
+	android:id="@+id/mybutton"
+	android:onClick="myButtonClick" /&gt;
+</code></pre>
+		
+		<li>add any event handling code to your <strong>Kotlin code file</strong>
+
+			<pre><code class="kotlin">
+// MainActivity.kt
+class MainActivity : AppCompatActivity() {
+	...
+	fun myButtonClick(view: View) {
+		// event-handling code goes here
+	}
+}
+</code></pre>
+	</ol>
+</section>
+
+<section>
+	<h1>
+		<code class="androidapi" data-class="android.widget.Button">Button</code>
+		(<a class="popup" href="http://developer.android.com/guide/topics/ui/controls/button.html">link</a>)
+
+		<span class="figuresright">
+			<img src="images/widget-button.png" alt="figure" />
+		</span>
+	</h1>
+
+	<p class="caption">
+		A clickable widget with a text label
+	</p>
+	
+	<table class="methodtable boxedtable">
+		<caption>key attributes in XML</caption>
+		<tr>
+			<td><code>android:clickable="<var>bool</var>"</code></td>
+			<td>set to <code>false</code> to disable the button</td>
+		</tr>
+		<tr>
+			<td><code>android:id="@+id/<var>id</var>"</code></td>
+			<td>unique ID for use in Kotlin code</td>
+		</tr>
+		<tr>
+			<td><code>android:onClick="<var>function</var>"</code></td>
+			<td>function to call in activity when clicked <br />
+				(must be <code>public</code>, <code>void</code>, and take a <code>View</code> arg)</td>
+		</tr>
+		<tr>
+			<td><code>android:text="<var>text</var>"</code></td>
+			<td>text to put in the button</td>
+		</tr>
+	</table>
+
+	<pre><code class="kotlin">
+// represented by Button class in Kotlin code
+val b = findViewById&lt;Button&gt;(R.id.<var>id</var>)
+...	
+</code></pre>
+</section>
+
+<section>
+	<h1>
+		<code class="androidapi" data-class="android.widget.TextView">TextView</code>
+
+		<span class="figuresright">
+			<img src="images/widget-textview.png" alt="figure" />
+		</span>
+	</h1>
+
+	<p class="caption">
+		Displays non-editable text
+	</p>
+	
+	<table class="methodtable boxedtable">
+		<caption>key attributes in XML</caption>
+		<tr>
+			<td><code>android:id="@+id/<var>id</var>"</code></td>
+			<td>unique ID for use in Kotlin code</td>
+		</tr>
+		<tr>
+			<td><code>android:text="<var>string</var>"</code></td>
+			<td>text to display</td>
+		</tr>
+	</table>
+
+	<pre><code class="kotlin">
+// to change the visible text in Kotlin code
+val tv = findViewById&lt;TextView&gt;(R.id.<var>id</var>)
+tv.text = "<var>text</var>"
+</code></pre>
+</section>
+
+<section>
+	<h1>
+		<code class="androidapi" data-class="android.widget.ScrollView">ScrollView</code>
+
+		<span class="figuresright">
+			<img src="images/widget-scrollview.png" alt="figure" />
+		</span>
+	</h1>
+
+	<p class="caption">
+		A container with scrollbars around another widget or container
+	</p>
+	
+<pre><code class="xml">
+&lt;LinearLayout ...&gt;
+	...
+	&lt;ScrollView
+			android:layout_width=&quot;wrap_content&quot;
+			android:layout_height=&quot;wrap_content&quot;&gt;
+		&lt;TextView ... android:id=&quot;@+id/turtle_info&quot; /&gt;
+	&lt;/ScrollView&gt;
+&lt;/LinearLayout&gt;
+</code></pre>
+</section>
+
+<section>
+	<h1>
+		<code class="androidapi" data-class="android.widget.EditText">EditText</code>
+		(<a class="popup" href="http://developer.android.com/reference/android/widget/EditText.html">link</a>)
+
+		<span class="figuresright">
+			<img src="images/widget-edittext.png" alt="figure" />
+		</span>
+	</h1>
+
+	<p class="caption">
+		An editable text input box
+	</p>
+	
+	<table class="methodtable boxedtable">
+		<caption>key attributes in XML <br />
+					(other attributes: 
+					capitalize, digits, fontFamily, letterSpacing, lineSpacingExtra, minLines, numeric, password,
+					phoneNumber, singleLine, textAllCaps, textColor, typeface)
+
+		</caption>
+		<tr>
+			<td><code>android:id="@+id/<var>id</var>"</code></td>
+			<td>unique ID for use in Kotlin code</td>
+		</tr>
+		<tr>
+			<td><code>android:hint="<var>text</var>"</code></td>
+			<td>
+				gray placeholder text shown before user types
+			</td>
+		</tr>
+		<tr>
+			<td><code>android:inputType="<var>type</var>"</code></td>
+			<td>
+				what kind of input is being typed;
+				<code>number</code>, <code>phone</code>, <code>date</code>,<code>time</code>, ...
+			</td>
+		</tr>
+		<tr>
+			<td><code>android:lines="<var>int</var>"</code></td>
+			<td>
+				number of visible lines (rows) of input
+			</td>
+		</tr>
+		<tr>
+			<td><code>android:maxLines="<var>int</var>"</code></td>
+			<td>
+				max lines to allow user to type in the box
+			</td>
+		</tr>
+		<tr>
+			<td><code>android:text="<var>text</var>"</code></td>
+			<td>
+				initial text to put in box (default empty)
+			</td>
+		</tr>
+		<tr>
+			<td><code>android:textSize="<var>size</var>"</code></td>
+			<td>
+				size of font to use (e.g. "20dp")
+			</td>
+		</tr>
+	</table>
+
+	<pre><code class="kotlin">
+// to get the user's text in Kotlin code
+val et = findViewById&lt;EditText&gt;(R.id.<var>id</var>)
+val text = et.text.toString()
+...
+</code></pre>
+</section>
+
+<section>
+	<h1>
+		<code class="androidapi" data-class="android.widget.ImageView">ImageView</code>
+
+		<span class="figuresright">
+			<img src="images/widget-imageview.png" alt="figure" />
+		</span>
+	</h1>
+
+	<p class="caption">
+		Displays an image without being clickable
+	</p>
+	
+	<table class="methodtable boxedtable">
+		<caption>key attributes in XML</caption>
+		<tr>
+			<td><code>android:id="@+id/<var>id</var>"</code></td>
+			<td>unique ID for use in Kotlin code</td>
+		</tr>
+		<tr>
+			<td><code>android:src="@drawable/<var>img</var>"</code></td>
+			<td>image to put in the view <br />
+				(must correspond to an image resource)
+			</td>
+		</tr>
+		<tr>
+			<td><code>android:contentDescription="<var>string</var>"</code></td>
+			<td>text to describe the image for blind users</td>
+		</tr>
+		<tr>
+			<td><code>android:tag="<var>string</var>"</code></td>
+			<td>a text tag to associate with the image</td>
+		</tr>
+		<tr>
+			<td><code>android:scaleType="<var>type</var>"</code></td>
+			<td>causes the image to grow/shrink; can be <code>"center"</code>, <code>"centerCrop"</code>, <code>"fitCenter"</code>, <code>"matrix"</code>, ...</td>
+		</tr>
+	</table>
+
+	<pre><code class="kotlin">
+// to change the visible image in Kotlin code
+val iv = findViewById&lt;ImageView&gt;(R.id.<var>id</var>)
+iv.setImageResource(R.drawable.<var>filename</var>)
+</code></pre>
+</section>
+
+<section>
+	<h1>
+		<code class="androidapi" data-class="android.widget.ImageButton">ImageButton</code>
+
+		<span class="figuresright">
+			<img src="images/widget-imagebutton.png" alt="figure" />
+		</span>
+	</h1>
+
+	<p class="caption">
+		A clickable widget with an image label
+	</p>
+	
+	<table class="methodtable boxedtable">
+		<caption>key attributes in XML</caption>
+		<tr>
+			<td><code>android:clickable="<var>bool</var>"</code></td>
+			<td>set to <code>false</code> to disable the button</td>
+		</tr>
+		<tr>
+			<td><code>android:id="@+id/<var>id</var>"</code></td>
+			<td>unique ID for use in Kotlin code</td>
+		</tr>
+		<tr>
+			<td><code>android:onClick="<var>function</var>"</code></td>
+			<td>function to call in activity when clicked <br />
+				(must be <code>public</code>, <code>void</code>, and take a <code>View</code> arg)</td>
+		</tr>
+		<tr>
+			<td><code>android:src="@drawable/<var>img</var>"</code></td>
+			<td>image to put in the button <br />
+				(must correspond to an image resource)
+			</td>
+		</tr>
+	</table>
+
+	<ul>
+		<li>to set up an image resource:
+			<ul>
+				<li>put image file in project folder <span class="filename">app/src/main/res/drawable</span></li>
+				<li class="subbullet">(use <span class="filename">app/src/main/res/drawable-xxhdpi</span> if image is very large)</li>
+				<li>use <code>@drawable/<var>foo</var></code> to refer to <span class="filename"><var>foo</var>.png</span></li>
+				<li>use simple file names with only letters and numbers</li>
+			</ul>
+	</ul>
+</section>
+
+<section>
+	<h1>Resources</h1>
+	
+	<div class="figuresright">
+		<img src="images/pikachu.png" alt="figure" />
+	</div>
+	
+	<ul>
+		<li>In the project directory structure:
+			<ul>
+				<li><code>res/<var>type</var>/<var>name</var>.<var>extension</var></code></li>
+				<li>example: <code>res/drawable/pikachu.png</code></li>
+				<li>(on disk: <span class="filename">AndroidStudioProjects/<var>ProjectName</var>/app/src/main/res/<var>type</var>/<var>name</var></span>)
+			</ul>
+		</li>
+		
+		<li>Referring to a resource, in the XML:
+			<ul>
+				<li><code>@<var>type</var>/<var>name</var></code></li>
+				<li>example: <code>@drawable/pikachu</code></li>
+			</ul>
+		</li>
+		
+		<li>Referring to a resource ID, in the Kotlin code:
+			<ul>
+				<li><code>R.<var>type</var>.<var>name</var></code></li>
+				<li>example: <code>R.drawable.pikachu</code></li>
+			</ul>
+		</li>
+	</ul>
+</section>
+
+<section>
+	<h1>Converting resource IDs</h1>
+	
+	<ul>
+		<li>
+			If you have a resource name and want its ID:
+		</li>
+		<li>
+			<pre><code class="kotlin">
+// set pikaID to the integer value of R.drawable.pikachu
+val pikaID = resources.getIdentifier(
+		"pikachu", "drawable", packageName)
+</code></pre>
+		</li>
+
+		<li>
+			If you have a resource ID and want its name:
+		</li>
+		<li>
+			<pre><code class="kotlin">
+// set pika to "pikachu"
+val pika = resources.getResourceEntryName(
+		R.drawable.pikachu)
+
+// set full to "R.drawable.pikachu"
+val full = resources.getResourceName(
+		R.drawable.pikachu)
+</code></pre>
+		</li>
+	</ul>
+</section>
+
+<section>
+	<h1>
+		<code class="androidapi" data-class="android.widget.CheckBox">CheckBox</code>
+		(<a class="popup" href="http://developer.android.com/guide/topics/ui/controls/checkbox.html">link</a>)
+
+		<span class="figuresright">
+			<img src="images/widget-checkbox.png" alt="figure" />
+		</span>
+	</h1>
+
+	<p class="caption">
+		An individual toggleable boolean on/off check box
+	</p>
+	
+	<table class="methodtable boxedtable">
+		<caption>key attributes in XML</caption>
+		<tr>
+			<td><code>android:id="@+id/<var>id</var>"</code></td>
+			<td>unique ID for use in Kotlin code</td>
+		</tr>
+		<tr>
+			<td><code>android:checked="<var>bool</var>"</code></td>
+			<td>
+				whether box is initially checked (default <code>false</code>)
+			</td>
+		</tr>
+		<tr>
+			<td><code>android:clickable="<var>bool</var>"</code></td>
+			<td>
+				set <code>false</code> to disable the checkbox
+			</td>
+		</tr>
+		<tr>
+			<td><code>android:onClick="<var>function</var>"</code></td>
+			<td>
+				function to call in activity when clicked <br />
+				(must be <code>public</code>, <code>void</code>, and take a <code>View</code> arg)
+			</td>
+		</tr>
+		<tr>
+			<td><code>android:text="<var>text</var>"</code></td>
+			<td>
+				text to put next to the checkbox
+			</td>
+		</tr>
+	</table>
+
+	<pre><code class="kotlin">
+// to manipulate a CheckBox in Kotlin code
+val cb = findViewById&lt;CheckBox&gt;(R.id.<var>id</var>)
+cb.toggle()
+cb.checked = true
+cb.performClick()
+</code></pre>
+</section>
+
+<section>
+	<h1>
+		<code class="androidapi" data-class="android.widget.Switch">Switch</code>
+		(<a class="popup" href="http://developer.android.com/guide/topics/ui/controls/switch.html">link</a>)
+
+		<span class="figuresright">
+			<img src="images/widget-switch.png" alt="figure" />
+		</span>
+	</h1>
+
+	<p class="caption">
+		An individual toggleable boolean on/off switch
+	</p>
+	
+	<table class="methodtable boxedtable">
+		<caption>key attributes in XML</caption>
+		<tr>
+			<td><code>android:id="@+id/<var>id</var>"</code></td>
+			<td>unique ID for use in Kotlin code</td>
+		</tr>
+		<tr>
+			<td><code>android:textOn="<var>text</var>"</code></td>
+			<td>
+				text to show next to "on" (right) side
+			</td>
+		</tr>
+		<tr>
+			<td><code>android:textOff="<var>text</var>"</code></td>
+			<td>
+				text to show next to "off" (left) side
+			</td>
+		</tr>
+		<tr>
+			<td><code>android:showText="<var>bool</var>"</code></td>
+			<td>
+				whether to show text on L/R sides (default <code>false</code>)
+			</td>
+		</tr>
+		<tr>
+			<td><code>android:onClick="<var>function</var>"</code></td>
+			<td>
+				function to call in activity when clicked
+			</td>
+		</tr>
+		<tr>
+			<td><code>android:text="<var>text</var>"</code></td>
+			<td>
+				text to put on left side next to the switch
+			</td>
+		</tr>
+	</table>
+
+	<pre><code class="kotlin">
+// to interact with a Switch in Kotlin code
+val sw = findViewById&lt;Switch&gt;(R.id.<var>id</var>)
+if (sw.checked) { ... }
+</code></pre>
+</section>
+
+<section>
+	<h1>
+		<code class="androidapi" data-class="android.widget.RadioButton">RadioButton</code>
+		(<a class="popup" href="http://developer.android.com/guide/topics/ui/controls/radiobutton.html">link</a>)
+
+		<span class="figuresright">
+			<img src="images/widget-radiobutton.png" alt="figure" />
+		</span>
+	</h1>
+
+	<p class="caption">
+		A toggleable on/off switch; part of a group
+	</p>
+	
+	<table class="methodtable boxedtable">
+		<caption>key attributes in XML</caption>
+		<tr>
+			<td><code>android:id="@+id/<var>id</var>"</code></td>
+			<td>unique ID for use in Kotlin code</td>
+		</tr>
+		<tr>
+			<td><code>android:checked="<var>bool</var>"</code></td>
+			<td>
+				whether button is initially checked (default <code>false</code>)
+			</td>
+		</tr>
+		<tr>
+			<td><code>android:clickable="<var>bool</var>"</code></td>
+			<td>
+				set to <code>false</code> to disable the button
+			</td>
+		</tr>
+		<tr>
+			<td><code>android:onClick="<var>function</var>"</code></td>
+			<td>
+				function to call in activity when clicked
+			</td>
+		</tr>
+		<tr>
+			<td><code>android:text="<var>text</var>"</code></td>
+			<td>
+				text to put next to the button
+			</td>
+		</tr>
+	</table>
+
+	<ul>
+		<li>
+			need to be nested inside a <code>RadioGroup</code> tag in XML so that only one can be selected at a time
+		</li>
+	</ul>
+</section>
+
+<section>
+	<h1><code class="androidapi" data-class="android.widget.RadioGroup">RadioGroup</code> example</h1>
+	
+	<pre class="longcode"><code class="xml">
+<em>&lt;RadioGroup</em> ...
+		android:orientation=&quot;horizontal&quot;&gt;
+	&lt;RadioButton ... android:id=&quot;@+id/lions&quot;  android:text=&quot;Lions&quot;
+					 <em>android:onClick=&quot;radioClick&quot;</em> /&gt;
+	&lt;RadioButton ... android:id=&quot;@+id/tigers&quot; android:text=&quot;Tigers&quot; 
+					 android:checked=&quot;true&quot;
+					 <em>android:onClick=&quot;radioClick&quot;</em> /&gt;
+	&lt;RadioButton ... android:id=&quot;@+id/bears&quot;  android:text=&quot;Bears, oh my!&quot;
+					 <em>android:onClick=&quot;radioClick&quot;</em> /&gt;
+<em>&lt;/RadioGroup&gt;</em>
+</code></pre>
+
+	<div class="">
+		<img src="images/radiobuttons-1.png" alt="figure" />
+	</div>
+</section>
+
+<section>
+	<h1>Reusing onClick handler</h1>
+	
+	<pre class="longcode"><code class="kotlin">
+// in MainActivity.kt
+class MainActivity : AppCompatActivity() {
+
+	fun radioClick(view: View) {
+		// check which radio button was clicked
+		if (view.id == R.id.lions) {
+			// ...
+		} else if (view.id == R.id.tigers) {
+			// ...
+		} else {
+			// bears ...
+		}
+	}
+}
+</code></pre>
+
+	<div class="">
+		<img src="images/radiobuttons-1.png" alt="figure" />
+	</div>
+</section>
+
+<section>
+	<h1>
+		<code class="androidapi" data-class="android.widget.ListView">ListView</code>
+	</h1>
+	
+	<div class="figuresright">
+		<img src="images/widget-listview.png" alt="figure" />
+	</div>
+	
+	<p class="caption">
+		A visible menu of selectable choices
+	</p>
+	
+	<ul>
+		<li>
+			lists are more complicated, so we'll cover them later ...
+		</li>
+	</ul>
+</section>
+
+<section>
+	<h1>TMNT app exercise</h1>
+	
+	<p>
+		Write an app to select TMNT characters from a set of radio buttons (or a spinner).
+	</p>
+	
+	<div class="figuresright">
+		<img src="images/tmnt-app-raphael.png" alt="figure" />
+	</div>
+
+	<ul>
+		<li>When a character is selected, an image about that character and other information is presented to the user.</li>
+		<li>Assume that relevant image files are already available for each character.</li>
+	</ul>
+</section>
+
+<!-- END SLIDES AREA -->
+			</div>
+		</div>
+
+		<script src="highlightjs/highlight.pack.js" charset="utf-8"></script>
+		<script src="cs193a-slides.js"></script>
+		<script src="reveal/js/reveal.js"></script>
+		<script>
+			initializeSlides();
+		</script>
+	</body>
+</html>

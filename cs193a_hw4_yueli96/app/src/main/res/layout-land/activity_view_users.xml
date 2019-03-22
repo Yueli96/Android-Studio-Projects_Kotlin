@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        tools:context=".ViewUsersActivity">
+
+    <fragment
+            android:id="@+id/view_users_fragment"
+            android:name="edu.stanford.cs193a.cs193a_hw4_yueli96.ViewUsers"
+            tools:layout="@layout/fragment_view_users"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_width="320sp"
+            android:layout_height="match_parent" />
+
+    <fragment
+            android:id="@+id/view_profile_fragment"
+            android:name="edu.stanford.cs193a.cs193a_hw4_yueli96.ViewProfile"
+            tools:layout="@layout/fragment_view_profile"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/view_users_fragment"
+            android:layout_width="0sp"
+            android:layout_height="match_parent" />
+
+</android.support.constraint.ConstraintLayout>

@@ -1,0 +1,1297 @@
+<html>
+	<head>
+		<title>CS 193A - Local Databases and SQL</title>
+		<link rel="stylesheet" href="highlightjs/styles/default.css">
+		<link rel="stylesheet" href="reveal/css/reveal.css">
+		<link rel="stylesheet" href="reveal/css/theme/white.css">
+		<link rel="stylesheet" href="cs193a-slides.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+
+<!-- BEGIN SLIDES AREA -->
+
+<section class="titleslide">
+	<h1>CS 193A</h1>
+
+	<p>Local Databases and SQL</p>
+</section>
+
+<section>
+	<h1>What is a database?</h1>
+
+	<ul>
+		<li><strong>relational database:</strong> Data structured into associated tables.
+			<ul>
+				<li>think of an Excel worksheet as a table
+				<li>a database is a collection of one or more tables, along with support for efficient operations
+					<ul>
+						<li>common operations: "CRUD"  (create, read, update, delete);  fast search
+					</ul>
+				
+				<li>a table <strong>row</strong> corresponds to a unit of data called a record;
+				<li>a <strong>column</strong> corresponds to an attribute of that record
+			</ul>
+	</ul>
+	
+	<div class="figureshorizontal4">
+		<img src="images/excel-worksheet.jpg" alt="Excel" />
+		&rarr;
+		<img src="images/database-relational.jpg" alt="database" />
+		<img src="images/database-icon.png" alt="database" />
+	</div>
+</section>
+
+<section>
+	<h1>Where is the data?</h1>
+
+	<div class="figuresright">
+		<img src="images/database-local.png" alt="Android database" />
+	</div>
+
+	<ul>
+		<li>A database can be located in many places:
+			<ul>
+				<li>within your Android device  (a "local database")
+				<li>on a remote web server
+				<li>spread throughout many remote servers  ("in the cloud")
+			</ul>
+		<li>Today we will learn to create and use local databases.
+	</ul>
+</section>
+
+<section>
+	<h1>Why use a database?</h1>
+
+	<ul>
+		<li><strong>powerful</strong>: can search, filter, combine data from many sources
+		<li><strong>fast</strong>: can search/filter a database very quickly compared to a file
+		<li><strong>big</strong>: scale well up to very large data sizes
+		<li><strong>safe</strong>: built-in mechanisms for failure recovery (transactions)
+		<li><strong>multi-user</strong>: concurrency features let many users view/edit data at same time
+		<li><strong>abstract</strong>: layer of abstraction between stored data and app(s)
+		<li><strong>common syntax</strong>: database programs use same SQL commands
+	</ul>
+</section>
+
+<section>
+	<h1>Some database software</h1>
+
+	<div class="figuresright">
+		<img src="images/sqlite.png" alt="Android with SQLite" />
+	</div>
+
+	<ul>
+		<li>Oracle
+		<li>Microsoft 
+			<ul>
+				<li>SQL Server (powerful)
+				<li>Access (simple)
+			</ul>
+		<li>PostgreSQL
+			<ul>
+				<li>powerful/complex free open-source database system
+			</ul>
+		<li><strong>SQLite</strong>
+			<ul>
+				<li>transportable, lightweight free open-source database system
+				<li>included with Android API and libraries
+			</ul>
+		<li>MySQL
+		<ul>
+			<li>simple free open-source database system
+			<li>many servers run "LAMP" (Linux, Apache, MySQL, and PHP)
+		</ul>
+	</ul>
+</section>
+
+<section>
+	<h1>Talking to a database</h1>
+
+	<ul>
+		<li><strong>SQL</strong> (Structured Query Language): relational databases typically use SQL to define, manage, and search data
+			<ul>
+				<li>a declarative language syntax that can be used in many situations
+			</ul>
+	</ul>
+	
+	<pre class="nolinenumbers"><code class="sql">
+SELECT name
+FROM   countries
+WHERE  population &gt; 20000000;
+</code></pre>
+
+	<div class="sqltables" style="margin-top: 2em">
+		<table class="sqltable">
+			<caption>countries</caption>
+			<tr>
+				<th>code</th>
+				<th>name</th>
+				<th>continent</th>
+				<th>independence_year</th>
+				<th>population</th>
+				<th>gnp</th>
+				<th>head_of_state</th>
+				<th>...</th>
+			</tr>
+			<tr>
+				<td>AFG</td>
+				<td>Afghanistan</td>
+				<td>Asia</td>
+				<td>1919</td>
+				<td>22720000</td>
+				<td>5976.0</td>
+				<td>Mohammad Omar</td>
+				<td>...</td>
+			</tr>
+			<tr>
+				<td>NLD</td>
+				<td>Netherlands</td>
+				<td>Europe</td>
+				<td>1581</td>
+				<td>15864000</td>
+				<td>371362.0</td>
+				<td>Beatrix</td>
+				<td>...</td>
+			</tr>
+			<tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
+		</table>
+	</div>
+</section>
+
+<section>
+	<h1>Example database: simpsons</h1>
+
+	<div class="sqltables">
+		<table class="sqltable">
+			<caption>students</caption>
+			<tr><th>id</th><th>name</th><th>email</th></tr>
+			<tr><td>123</td><td>Bart</td><td>bart@fox.com</td></tr>
+			<tr><td>456</td><td>Milhouse</td><td>milhouse@fox.com</td></tr>
+			<tr><td>888</td><td>Lisa</td><td>lisa@fox.com</td></tr>
+			<tr><td>404</td><td>Ralph</td><td>ralph@fox.com</td></tr>
+		</table>
+
+		<table class="sqltable">
+			<caption>teachers</caption>
+			<tr><th>id</th><th>name</th></tr>
+			<tr><td>1234</td><td>Krabappel</td></tr>
+			<tr><td>5678</td><td>Hoover</td></tr>
+			<tr><td>9012</td><td>Stepp</td></tr>
+		</table>
+
+		<table class="sqltable">
+			<caption>courses</caption>
+			<tr><th>id</th><th>name</th><th>teacher_id</th></tr>
+			<tr><td>10001</td><td>Computer Science 142</td><td>1234</td></tr>
+			<tr><td>10002</td><td>Computer Science 143</td><td>5678</td></tr>
+			<tr><td>10003</td><td>Computer Science 190M</td><td>9012</td></tr>
+			<tr><td>10004</td><td>Informatics 100</td><td>1234</td></tr>
+		</table>
+
+		<table class="sqltable">
+			<caption>grades</caption>
+
+			<tr><th>student_id</th><th>course_id</th><th>grade</th></tr>
+			<tr><td>123</td><td>10001</td><td>B-</td></tr>
+			<tr><td>123</td><td>10002</td><td>C</td></tr>
+			<tr><td>456</td><td>10001</td><td>B+</td></tr>
+			<tr><td>888</td><td>10002</td><td>A+</td></tr>
+			<tr><td>888</td><td>10003</td><td>A+</td></tr>
+			<tr><td>404</td><td>10004</td><td>D+</td></tr>
+		</table>
+	</div>
+</section>
+
+<section>
+	<h1>Example database: world</h1>
+
+	<div class="sqltables">
+		<table class="sqltable">
+			<caption>countries
+				<span style="font-size: smaller;">(other columns:
+				region,
+				surface_area,
+				life_expectancy,
+				gnp_old,
+				local_name,
+				government_form,
+				capital,
+				code2)</span>
+			</caption>
+			<tr>
+				<th>code</th>
+				<th>name</th>
+				<th>continent</th>
+				<th>independence_year</th>
+				<th>population</th>
+				<th>gnp</th>
+				<th>head_of_state</th>
+				<th>...</th>
+			</tr>
+			<tr>
+				<td>AFG</td>
+				<td>Afghanistan</td>
+				<td>Asia</td>
+				<td>1919</td>
+				<td>22720000</td>
+				<td>5976.0</td>
+				<td>Mohammad Omar</td>
+				<td>...</td>
+			</tr>
+			<tr>
+				<td>NLD</td>
+				<td>Netherlands</td>
+				<td>Europe</td>
+				<td>1581</td>
+				<td>15864000</td>
+				<td>371362.0</td>
+				<td>Beatrix</td>
+				<td>...</td>
+			</tr>
+			<tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
+		</table>
+		
+		<table class="sqltable">
+			<caption>cities</caption>
+			<tr>
+				<th>id</th>
+				<th>name</th>
+				<th>country_code</th>
+				<th>district</th>
+				<th>population</th>
+			</tr>
+			<tr><td>3793</td><td>New York</td><td>USA</td><td>New York</td><td>8008278</td></tr>
+			<tr><td>1</td><td>Los Angeles</td><td>USA</td><td>California</td><td>3694820</td></tr>
+			<tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
+		</table>
+
+		<table class="sqltable">
+			<caption>languages</caption>
+			<tr><th>country_code</th><th>language</th><th>official</th><th>percentage</th></tr>
+			<tr>
+			<td>AFG</td><td>Pashto</td><td>T</td><td>52.4</td></tr>
+			<td>NLD</td><td>Dutch</td><td>T</td><td>95.6</td></tr>
+			<tr><td>...</td><td>...</td><td>...</td><td>...</td></tr>
+		</table>
+	</div>
+</section>
+
+<section>
+	<h1>Example database: imdb</h1>
+
+	<div class="sqltables">
+		<table class="sqltable">
+			<caption>actors</caption>
+			<tr><th>id</th><th>first_name</th><th>last_name</th><th>gender</th></tr>
+			<tr><td>433259</td><td>William</td><td>Shatner</td><td>M</td></tr>
+			<tr><td>797926</td><td>Britney</td><td>Spears</td><td>F</td></tr>
+			<tr><td>831289</td><td>Sigourney</td><td>Weaver</td><td>F</td></tr>
+			<tr><td colspan="4" style="text-align: center">...</td></tr>
+		</table>
+
+		<table class="sqltable">
+			<caption>movies</caption>
+			<tr><th>id</th><th>name</th><th>year</th><th>rank</th></tr>
+			<tr><td>112290</td><td>Fight Club</td><td>1999</td><td>8.5</td></tr>
+			<tr><td>209658</td><td>Meet the Parents</td><td>2000</td><td>7</td></tr>
+			<tr><td>210511</td><td>Memento</td><td>2000</td><td>8.7</td></tr>
+			<tr><td colspan="4" style="text-align: center">...</td></tr>
+		</table>
+
+		<table class="sqltable">
+			<caption>roles</caption>
+			<tr><th>actor_id</th><th>movie_id</th><th>role</th></tr>
+			<tr><td>433259</td><td>313398</td><td>Capt. James T. Kirk</td></tr>
+			<tr><td>433259</td><td>407323</td><td>Sgt. T.J. Hooker</td></tr>
+			<tr><td>797926</td><td>342189</td><td>Herself</td></tr>
+			<tr><td colspan="3" style="text-align: center">...</td></tr>
+		</table>
+
+		<table class="sqltable">
+			<caption>movies_genres</caption>
+			<tr><th>movie_id</th><th>genre</th></tr>
+			<tr><td>209658</td><td>Comedy</td></tr>
+			<tr><td>313398</td><td>Action</td></tr>
+			<tr><td>313398</td><td>Sci-Fi</td></tr>
+			<tr><td colspan="2" style="text-align: center">...</td></tr>
+		</table>
+
+		<table class="sqltable">
+			<caption>directors</caption>
+			<tr><th>id</th><th>first_name</th><th>last_name</th></tr>
+			<tr><td>24758</td><td>David</td><td>Fincher</td></tr>
+			<tr><td>66965</td><td>Jay</td><td>Roach</td></tr>
+			<tr><td>72723</td><td>William</td><td>Shatner</td></tr>
+			<tr><td colspan="3" style="text-align: center">...</td></tr>
+		</table>
+
+		<table class="sqltable">
+			<caption>movies_directors</caption>
+			<tr><th>director_id</th><th>movie_id</th></tr>
+			<tr><td>24758</td><td>112290</td></tr>
+			<tr><td>66965</td><td>209658</td></tr>
+			<tr><td>72723</td><td>313398</td></tr>
+			<tr><td colspan="2" style="text-align: center">...</td></tr>
+		</table>
+	</div>
+</section>
+
+<section>
+	<h1>SQL</h1>
+
+	<pre class="nolinenumbers"><code class="sql">
+-- this is a comment; below are two queries --
+SELECT name FROM cities WHERE id = 17;
+INSERT INTO countries VALUES ('SLD', 'ENG', 'T', 100.0);
+</code></pre>
+
+	<ul>
+		<li><strong>Structured Query Language (SQL)</strong>: a language for searching and updating a database
+			<ul>
+				<li>a standard syntax that is used by all database software <span class="aside">(with minor incompatibilities)</span>
+				<li>generally case-insensitive
+			</ul>
+
+		<li>a <em>declarative</em> language: describes what data you are seeking, not exactly how to find it
+	</ul>
+</section>
+
+<section>
+	<h1>The SELECT statement</h1>
+
+	<pre class="nolinenumbers"><code class="sql">
+SELECT <var>column(s)</var> FROM <var>table</var> WHERE <var>condition</var>;
+</code></pre>
+
+	<pre class="nolinenumbers"><code class="sql">
+-- example SELECT query --
+SELECT name, population
+FROM   cities
+WHERE  country_code = "FSM";
+</code></pre>
+
+	<ul>
+		<li>searches a database and returns a set of results
+			<ul>
+				<li>column name(s) after <code>SELECT</code> filter which parts of rows are returned
+				<li>table and column names are case-sensitive
+				<li><code>SELECT DISTINCT</code>  removes any duplicates
+				<li><code>SELECT *</code>  keeps all columns
+			</ul>
+		<li><code>WHERE</code> clause filters out rows based on columns' data values
+		<li>in large databases, <code>WHERE</code> clause is critical to reduce result set size
+	</ul>
+</section>
+
+<section>
+	<h1>SqliteTest Android app</h1>
+
+	<div class="figuresright">
+		<img src="images/sqlitetest-screenshot-1.png" alt="SQLiteTest app" />
+	</div>
+
+	<ul>
+		<li>instructor-provided SqliteTest app lets you type SQL queries and see the results instantly on the emulator
+		<ul>
+			<li>contains all databases in this lecture (simpsons, world, imdb)
+			<li>good for testing queries before putting them into actual app Kotlin code
+		</ul>
+	</ul>
+</section>
+
+<section>
+	<h1>
+		Android SQLiteDatabase
+		(<a href="http://developer.android.com/reference/kotlin/android/database/sqlite/SQLiteDatabase.html">docs</a>)
+	</h1>
+
+	<pre><code class="kotlin">
+val db = openOrCreateDatabase("<var>name</var>", MODE_PRIVATE, null)
+db.execSQL("<var>SQL query</var>")
+</code></pre>
+
+	<ul>
+		<li>The <code>openOrCreateDatabase</code> method either creates a new empty database with that name or opens an existing one
+		<li>once opened, you can use methods to execute SQL commands:
+			<ul>
+				<li><code>rawQuery</code>	- if your query returns results  (e.g. <code>SELECT</code>)
+				<li><code>execSQL</code>  	- if your query does not return results  (e.g. <code>INSERT</code>, <code>DELETE</code>)
+			</ul>
+
+		<li>If query has invalid SQL, throws an <code>SqliteException</code>
+		<li>SQLite databases get saved on device in <code>/data/data/<var>packageName</var>/databases/</code>
+			<span class="aside">(but you should never need to manipulate them as files directly)</span>
+	</ul>
+</section>
+
+<section>
+	<h1>
+		<code class="android-api" data-class="android.database.sqlite.SQLiteDatabase">SQLiteDatabase</code> methods
+	</h1>
+
+	<table class="methodtable boxedtable">
+		<thead>
+			<tr>
+				<th>Method</th>
+				<th>Description</th>
+			</tr>
+		</thead>
+		
+		<tbody>
+			<tr>
+				<td><code><var>db</var>.beginTransaction() <br />
+<var>db</var>.endTransaction()</code></td>
+				<td>methods for transactions, which are a series of SQL commands that can be run as a group</td>
+			</tr>
+			<tr>
+				<td><code>db.delete("<var>table</var>", <br />
+"<var>whereClause</var>", <var>args</var>)</code></td>
+				<td>delete rows from a table</td>
+			</tr>
+			<tr>
+				<td><code><var>db</var>.deleteDatabase(<var>file</var>)</code></td>
+				<td>delete an entire database  <em>(be careful)</em></td>
+			</tr>
+			<tr>
+				<td><code><var>db</var>.execSQL("<var>query</var>")</code></td>
+				<td>run a query that doesn't return any results (e.g. insert, delete, update, etc.)</td>
+			</tr>
+			<tr>
+				<td><code><var>db</var>.insert("<var>table</var>", null, <var>values</var>)</code></td>
+				<td>insert rows into a database table</td>
+			</tr>
+			<tr>
+				<td><code><var>db</var>.query(<var>...</var>)</code></td>
+				<td>(we suggest <code>rawQuery</code> instead)</td>
+			</tr>
+			<tr>
+				<td><code><var>db</var>.rawQuery("<var>SQL query</var>", <var>args</var>)</code></td>
+				<td>perform the given SQL <code>SELECT</code> query and return a cursor to view the results</td>
+			</tr>
+			<tr>
+				<td><code><var>db</var>.replace("<var>table</var>", null, <var>values</var>)</code></td>
+				<td>replace rows in a database table</td>
+			</tr>
+			<tr>
+				<td><code><var>db</var>.update("<var>table</var>", <var>values</var>, <br />
+"<var>whereClause</var>", <var>args</var>)</code></td>
+				<td>update existing rows in a database table</td>
+			</tr>
+		</tbody>
+	</table>
+	
+</section>
+
+<section>
+	<h1>
+		Cursor
+		(<a class="popup" href="https://developer.android.com/reference/kotlin/android/database/Cursor">docs</a>)
+	</h1>
+
+	<ul>
+		<li>The Android SQLite API returns an object called a <code>Cursor</code> that allows you to iterate through the results of a <code>SELECT</code> query.
+			<ul>
+				<li>Similar to the concept of an iterator
+			</ul>
+		
+		<li>Like a pointer positioned to a given row from the set of results.
+			<ul>
+				<li>You can move the cursor forward to the next result row.
+				<li>You can ask the cursor for values of columns of its "current" row.
+			</ul>
+	</ul>
+	
+	<pre><code class="python">
+SELECT id, email FROM students;
+</code></pre>
+
+	<div class="sqltables">
+		<table class="sqltable">
+			<caption>students</caption>
+			<tr><th class="externalfirstcol"></th><th>id</th><th>name</th><th>email</th></tr>
+			<tr style="border: 3px dashed #090;"><td class="externalfirstcol">cursor &rarr;</td><td>123</td><td>Bart</td><td>bart@fox.com</td></tr>
+			<tr><td class="externalfirstcol"></td><td>456</td><td>Milhouse</td><td>milhouse@fox.com</td></tr>
+			<tr><td class="externalfirstcol"></td><td>888</td><td>Lisa</td><td>lisa@fox.com</td></tr>
+			<tr><td class="externalfirstcol"></td><td>404</td><td>Ralph</td><td>ralph@fox.com</td></tr>
+		</table>
+	</div>
+</section>
+
+<section data-transition="fade-out">
+	<h1><code>Cursor</code> example</h1>
+
+<pre><code class="kotlin">
+// Cursor iterates through row results one at a time
+val cursor = db.rawQuery("SELECT id, email FROM students", null)
+while (cursor.moveToNext()) {
+	val id = cursor.getInt(cursor.getColumnIndex("id"))
+	val email = cursor.getString(cursor.getColumnIndex("email"))
+	...
+}
+cursor.close()
+</code></pre>
+
+	<div class="sqltables">
+		<table class="sqltable">
+			<caption>students</caption>
+			<tr><th class="externalfirstcol"></th><th>id</th><th>name</th><th>email</th></tr>
+			<tr style="border: 3px dashed #090;"><td class="externalfirstcol">cursor &rarr;</td><td>123</td><td>Bart</td><td>bart@fox.com</td></tr>
+			<tr><td class="externalfirstcol"></td><td>456</td><td>Milhouse</td><td>milhouse@fox.com</td></tr>
+			<tr><td class="externalfirstcol"></td><td>888</td><td>Lisa</td><td>lisa@fox.com</td></tr>
+			<tr><td class="externalfirstcol"></td><td>404</td><td>Ralph</td><td>ralph@fox.com</td></tr>
+		</table>
+	</div>
+</section>
+
+<section data-transition="fade-in">
+	<h1>The <code>with</code> statement</h1>
+
+<pre><code class="kotlin">
+// Cursor iterates through row results one at a time
+with (db.rawQuery("SELECT id, email FROM students", null)) {
+	while (moveToNext()) {
+		val id = getInt(getColumnIndex("id"))
+		val email = getString(getColumnIndex("email"))
+		...
+	}
+	close()
+}
+</code></pre>
+
+	<ul>
+		<li>the <code>with</code> statement executes code in the context of an object
+		<li>don't need to write <code>objName.</code> in front of any method calls on that object
+	</ul>
+</section>
+
+<section>
+	<h1><code class="android-api" data-class="android.database.Cursor">Cursor</code> methods</h1>
+
+	<table class="methodtable boxedtable">
+		<thead>
+			<tr>
+				<th>Method</th>
+				<th>Description</th>
+			</tr>
+		</thead>
+		
+		<tbody>
+			<tr>
+				<td><code><var>cr</var>.close()</code></td>
+				<td>call this when done with the cursor</td>
+			</tr>
+			<tr>
+				<td><code><var>cr</var>.getColumnIndex("<var>name</var>")</code></td>
+				<td>index of a column based on its name</td>
+			</tr>
+			<tr>
+				<td><code><var>cr</var>.getColumnName(<var>index</var>)</code></td>
+				<td>name of column based on its index</td>
+			</tr>
+			<tr>
+				<td><code><var>cr</var>.columnCount</code></td>
+				<td>number of columns per row</td>
+			</tr>
+			<tr>
+				<td><code><var>cr</var>.count</code></td>
+				<td>number of rows</td>
+			</tr>
+			<tr>
+				<td><code><var>cr</var>.getDouble(<var>index</var>), <var>cr</var>.getBlob(<var>index</var>), <br />
+<var>cr</var>.getFloat(<var>index</var>),  <var>cr</var>.getInt(<var>index</var>), <br />
+<var>cr</var>.getLong(<var>index</var>),   <var>cr</var>.getString(<var>index</var>)</code></td>
+				<td>get data from a column</td>
+			</tr>
+			<tr>
+				<td><code><var>cr</var>.isBeforeFirst
+<var>cr</var>.isFirst
+<var>cr</var>.isLast</code></td>
+				<td>ask about cursor's position</td>
+			</tr>
+			<tr>
+				<td><code><var>cr</var>.moveToFirst() <br />
+<var>cr</var>.moveToLast() <br />
+<var>cr</var>.moveToNext() <br />
+<var>cr</var>.moveToPosition(<var>index</var>)</code></td>
+				<td>tell cursor to move to a given position (each returns boolean indicating success)</td>
+			</tr>
+		</tbody>
+	</table>
+	
+</section>
+
+<section>
+	<h1>Importing a .sql file</h1>
+
+	<ul>
+		<li>A <span class="filename">.sql</span> file contains a sequence of SQL commands.
+			<ul>
+				<li>Common format for exporting an entire database and its contents.
+				<li>Used to save a backup or restore db to another server.
+			</ul>
+
+		<li>To import a <span class="filename">.sql</span> file into an Android app:
+			<ul>
+				<li>Put the <span class="filename">.sql</span> file into your app's <span class="filename">res/raw</span> folder
+				<li>Open it with a <code>Scanner</code>
+				<li>Read lines until you find a semicolon
+				<li>Run the string you read as a query using <code>execSQL</code>
+				<li>Repeat
+			</ul>
+	</ul>
+</section>
+
+<section>
+	<h1>Import .sql example</h1>
+
+	<pre><code class="kotlin">
+/* Reads from a .sql file and executes its SQL statements. */
+private fun importDatabase(dbName: String) {
+	val db = openOrCreateDatabase(dbName, MODE_PRIVATE, null)
+	val resId = resources.getIdentifier(dbName, "raw", packageName)
+	val scan = Scanner(resources.openRawResource(resId))
+
+	// build and execute queries
+	var query = ""
+	while (scan.hasNextLine()) {
+		val line = scan.nextLine()
+		if (line.trim().startsWith("--")) continue   // strip comments
+		query += "$line\n"
+		if (query.trim().endsWith(";")) {
+			db.execSQL(query)
+			query = ""
+		}
+	}
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>More about WHERE clauses</h1>
+
+<pre class="nolinenumbers"><code class="sql">
+-- example WHERE clause variations --
+SELECT name, gnp FROM countries WHERE gnp > 2000000;
+
+SELECT * FROM cities WHERE code = 'USA' AND population >= 2000000;
+
+SELECT code, name, population
+FROM   countries
+WHERE  name LIKE 'United%';
+</code></pre>
+	
+	<p>
+		<code>WHERE</code> clause can use the following operators:
+	</p>
+	
+	<ul>
+		<li><code>=</code>, <code>&gt;</code>, <code>&gt;=</code>, <code>&lt;</code>, <code>&lt;=</code>
+		<li><code>&lt;&gt;</code> : not equal   (some systems support <code>!=</code> )
+		<li><code>BETWEEN <var>min</var> AND <var>max</var></code>
+		<li><code>LIKE <var>pattern</var></code>   (put <code>%</code> on ends to search for prefix/suffix/substring)
+		<li><code>IN (<var>value</var>, <var>value</var>, ..., <var>value</var>)</code>
+		<li><code><var>condition1</var> AND <var>condition2</var></code>
+		<li><code><var>condition1</var> OR <var>condition2</var></code>
+	</ul>
+</section>
+
+<section>
+	<h1>ORDER BY, LIMIT</h1>
+
+<pre class="nolinenumbers"><code class="sql">
+-- example ORDER BY and LIMIT queries --
+SELECT code, name, population FROM countries
+WHERE name LIKE 'United%' <em>ORDER BY population</em>;
+
+SELECT * FROM countries <em>ORDER BY population DESC, gnp</em>;
+
+SELECT name FROM cities WHERE name LIKE 'K%' <em>LIMIT 5</em>;
+</code></pre>
+	
+	<ul>
+		<li><code>ORDER BY</code> sorts in ascending (default) or descending order
+			<ul>
+				<li>can specify multiple orderings in decreasing order of significance
+			</ul>
+
+		<li><code>LIMIT</code> gets first <var>N</var> results of the query
+			<ul>
+				<li>useful as a sanity check to make sure query doesn't return too many rows
+			</ul>
+	</ul>
+</section>
+
+<section>
+	<h1>INSERT and REPLACE</h1>
+
+<pre class="nolinenumbers"><code class="sql">
+INSERT INTO <var>table</var> (<var>columnName</var>, ..., <var>columnName</var>)
+VALUES (<var>value</var>, <var>value</var>, ..., <var>value</var>);
+
+REPLACE INTO <var>table</var> (<var>columnName</var>, ..., <var>columnName</var>)
+VALUES (<var>value</var>, <var>value</var>, ..., <var>value</var>) WHERE <var>conditions</var>;
+</code></pre>
+
+<pre class="nolinenumbers"><code class="sql">
+-- example INSERT and REPLACE queries --
+INSERT INTO students (name, email)
+VALUES ("Lewis", "lewis@fox.com");
+
+REPLACE INTO students (id, name, email)
+VALUES (789, "Martin", "prince@fox.com")
+WHERE id = 789;
+</code></pre>
+	
+	<ul>
+		<li>columns can have default or automatic values (such as IDs)
+		<li>omitting them from the <code>INSERT</code> statement uses the defaults
+		<li><code>REPLACE</code> is like <code>INSERT</code> but modifies an existing row
+	</ul>
+</section>
+
+<section>
+	<h1>INSERT with SQLiteDatabase</h1>
+
+	<pre><code class="kotlin">
+// use execSQL instead of rawQuery, because no results
+val query = "INSERT INTO students (id, name, email) "
+		+ "VALUES (725, 'Lewis', 'lewis@fox.com')"
+db.execSQL(query)
+
+val query2 = "REPLACE INTO students (id, name, email) "
+		+ "VALUES (789, 'Martin', 'prince@fox.com')"
+		+ "WHERE ID = 404"
+db.execSQL(query2)
+</code></pre>
+
+	<div class="sqltables">
+		<table class="sqltable">
+			<caption>students</caption>
+			<tr><th>id</th><th>name</th><th>email</th></tr>
+			<tr><td>123</td><td>Bart</td><td>bart@fox.com</td></tr>
+			<tr><td>456</td><td>Milhouse</td><td>milhouse@fox.com</td></tr>
+			<tr><td>888</td><td>Lisa</td><td>lisa@fox.com</td></tr>
+			<tr><td>404</td><td>Ralph</td><td>ralph@fox.com</td></tr>
+			<tr class="highlight"><td>725</td><td>Lewis</td><td>lewis@fox.com</td></tr>
+		</table>
+	</div>
+</section>
+
+<section>
+	<h1>UPDATE</h1>
+
+<pre class="nolinenumbers"><code class="sql">
+UPDATE <var>table</var>
+SET <var>column1</var> = <var>value1</var>,
+	...,
+	<var>columnN </var>= <var>valueN</var>
+WHERE <var>conditions</var>;
+</code></pre>
+
+<pre class="nolinenumbers"><code class="sql">
+-- example UPDATE query --
+UPDATE students SET email = "lisas@gmail.com" WHERE id = 888;
+</code></pre>
+
+	<ul>
+		<li>modifies an existing row(s) in a table
+		<li>Be careful!  If you omit <code>WHERE</code> clause, it modifies ALL rows
+	</ul>
+
+	<div class="sqltables">
+		<table class="sqltable">
+			<caption>students</caption>
+			<tr><th>id</th><th>name</th><th>email</th></tr>
+			<tr><td>123</td><td>Bart</td><td>bart@fox.com</td></tr>
+			<tr><td>456</td><td>Milhouse</td><td>milhouse@fox.com</td></tr>
+			<tr><td>888</td><td>Lisa</td><td class="highlight">lisas@gmail.com</td></tr>
+			<tr><td>404</td><td>Ralph</td><td>ralph@fox.com</td></tr>
+		</table>
+	</div>
+</section>
+
+<section>
+	<h1>UPDATE with SQLiteDatabase</h1>
+
+<pre><code class="kotlin">
+// an update statement using execSQL
+val query = "UPDATE students "
+		+ "SET email = 'lisas@gmail.com' "
+		+ "WHERE id = 888"
+db.execSQL(query)
+</code></pre>
+
+	<div class="sqltables">
+		<table class="sqltable">
+			<caption>students</caption>
+			<tr><th>id</th><th>name</th><th>email</th></tr>
+			<tr><td>123</td><td>Bart</td><td>bart@fox.com</td></tr>
+			<tr><td>456</td><td>Milhouse</td><td>milhouse@fox.com</td></tr>
+			<tr><td>888</td><td>Lisa</td><td class="highlight">lisas@gmail.com</td></tr>
+			<tr><td>404</td><td>Ralph</td><td>ralph@fox.com</td></tr>
+		</table>
+	</div>
+</section>
+
+<section>
+	<h1>DELETE</h1>
+
+<pre class="nolinenumbers"><code class="sql">
+DELETE FROM <var>table</var> WHERE <var>conditions</var>;
+</code></pre>
+
+<pre class="nolinenumbers"><code class="sql">
+-- example DELETE query --
+DELETE FROM students WHERE id = 404;
+</code></pre>
+
+	<ul>
+		<li>removes existing row(s) in a table
+		<li>can be used with other syntax like <code>LIMIT</code>, <code>LIKE</code>, <code>ORDER BY</code>, etc.
+		<li>Be careful!  If you omit <code>WHERE</code> clause, it deletes ALL rows!
+	</ul>
+
+	<div class="sqltables">
+		<table class="sqltable">
+			<caption>students</caption>
+			<tr><th>id</th><th>name</th><th>email</th></tr>
+			<tr><td>123</td><td>Bart</td><td>bart@fox.com</td></tr>
+			<tr><td>456</td><td>Milhouse</td><td>milhouse@fox.com</td></tr>
+			<tr><td>888</td><td>Lisa</td><td>lisas@gmail.com</td></tr>
+			<tr class="deleted"><td>404</td><td>Ralph</td><td>ralph@fox.com</td></tr>
+		</table>
+	</div>
+</section>
+
+<section>
+	<h1>DELETE with SQLiteDatabase</h1>
+
+<pre><code class="kotlin">
+// a delete statement using execSQL
+val query = "DELETE FROM students WHERE id = 888"
+db.execSQL(query)
+</code></pre>
+
+	<div class="sqltables">
+		<table class="sqltable">
+			<caption>students</caption>
+			<tr><th>id</th><th>name</th><th>email</th></tr>
+			<tr><td>123</td><td>Bart</td><td>bart@fox.com</td></tr>
+			<tr><td>456</td><td>Milhouse</td><td>milhouse@fox.com</td></tr>
+			<tr class="deleted"><td>888</td><td>Lisa</td><td>lisa@fox.com</td></tr>
+			<tr><td>404</td><td>Ralph</td><td>ralph@fox.com</td></tr>
+		</table>
+	</div>
+</section>
+
+<section>
+	<h1>ContentValues</h1>
+
+<pre><code class="kotlin">
+// INSERT INTO students (name, email) VALUES ('Lewis', 'lewis@fox.com')
+val cvalues = ContentValues()
+cvalues.put("name",  name)
+cvalues.put("email", email)
+db.insert("students", null, <em>cvalues</em>)
+
+// UPDATE students SET email = 'lisas@gmail.com' WHERE id = 888
+val cvalues = ContentValues()
+cvalues.put("email", "lisas@gmail.com")
+db.update("students", <em>cvalues</em>, "id = 888", null)
+
+// DELETE FROM students WHERE id = 888
+db.delete("students", "id = 888", null)
+</code></pre>
+
+	<ul>
+		<li><code class="android-api" data-class="android.content.ContentValues">ContentValues</code> can be optionally used as a level of abstraction for statements like <code>INSERT</code>, <code>UPDATE</code>, <code>REPLACE</code>
+			<ul>
+				<li>meant to provide cleaner Java syntax rather than raw SQL syntax
+				<li>can avoid security problems (SQL injection)
+			</ul>
+	</ul>
+</section>
+
+<section>
+	<h1>Exercise: Baby Name Surfer</h1>
+	
+	<div class="figuresright">
+		<img src="images/namesurfer.png" alt="NameSurfer" />
+	</div>
+	
+	<p>
+		Write an Android app with a subset of functionality similar to the "Name Surfer" assignment from CS 106A.
+	</p>
+	
+	<ul>
+		<li>Prompt the user for a name and sex.
+		<li>Search the <strong>ranks</strong> table for that name/sex.
+		<li>Display the rankings visually in the app.
+		
+		<li>There is also a <strong>meanings</strong> table of meanings of baby names.
+			<ul>
+				<li>Search it for the meaning of the name typed by the user and display that meaning.
+			</ul>
+	</ul>
+
+	<div class="sqltables">
+		<table class="sqltable">
+			<caption>ranks</caption>
+			<tr><th>name</th><th>sex</th><th>year</th><th>rank</th></tr>
+			<tr><td>Aaron</td><td>M</td><td>1880</td><td>133</td></tr>
+			<tr><td>Aaron</td><td>M</td><td>1890</td><td>148</td></tr>
+			<tr><td>Zelda</td><td>F</td><td>2000</td><td>3979</td></tr>
+		</table>
+
+		<table class="sqltable">
+			<caption>meanings</caption>
+			<tr><th>name</th><th>meaning</th></tr>
+			<tr><td>Aaron</td><td>derived from Mars, the Roman god of ...</td></td></tr>
+			<tr><td>Zelda</td><td>Yiddish, Middle English, based on ...</td></td></tr>
+		</table>
+	</div>
+</section>
+
+<section>
+	<h1>Suggested library: GraphView</h1>
+
+	<div class="figuresright" style="max-width: 25%">
+		<img src="images/graphview-library-1.png" alt="NameSurfer" /> <br />
+		<img src="images/graphview-library-2.png" alt="NameSurfer" /> <br />
+		<img src="images/graphview-library-3.png" alt="NameSurfer" />
+	</div>
+	
+	<ul>
+		<li>GraphView library information can be found at:
+			<ul>
+				<li><a class="popup" href="http://www.android-graphview.org/">http://www.android-graphview.org/</a>
+			</ul>
+		
+		<li>add it to your <span class="filename">build.gradle</span>:
+			<pre><code class="groovy">
+dependencies {
+	<em>implementation 'com.jjoe64:graphview:4.+'</em>
+}
+</code></pre>
+
+		<li>create a graph in your activity XML:
+			<pre><code class="xml">
+&lt;com.jjoe64.graphview.GraphView
+	android:layout_width=&quot;<var>width</var>&quot;
+	android:layout_height=&quot;<var>height</var>&quot;
+	android:id=&quot;@+id/<var>id</var>&quot; /&gt;
+</code></pre>
+	</ul>
+</section>
+
+<section>
+	<h1>Line Graphs in GraphView</h1>
+
+	<ul>
+		<li>talk to a graph in Kotlin:
+
+		<pre><code class="kotlin">
+my_graph_id.title = "title"
+
+// set X bounds; Y is the same idea
+my_graph_id.viewport.isXAxisBoundsManual = true
+my_graph_id.viewport.setMinX(minX)
+my_graph_id.viewport.setMaxX(maxX)
+...
+</code></pre>
+
+
+		<li>add a line to the graph:
+
+		<pre><code class="kotlin">
+val series = LineGraphSeries&lt;&gt;()
+val point = DataPoint(x, y)
+series.appendData(point, false, maxPoints)
+...
+my_graph_id.addSeries(series)
+</code></pre>
+	</ul>
+</section>
+
+<section>
+	<h1>Creating/deleting a database</h1>
+
+	<pre><code class="kotlin">
+// create a database (if it did not exist)
+val db = openOrCreateDatabase("<var>name</var>", MODE_PRIVATE, null)
+
+// delete a database
+deleteDatabase("<var>name</var>")
+
+// check whether a database exists
+if (getDatabasePath(<var>name</var>).exists()) {
+	...
+}
+</code></pre>
+
+	<ul>
+		<li>don't read entire database from <span class="filename">.sql</span> file every time app loads
+		<li>create it only if it does not exist
+	</ul>
+</section>
+
+<section>
+	<h1>Creating a table</h1>
+
+<pre class="nolinenumbers"><code class="sql">
+-- create a new table --
+CREATE TABLE IF NOT EXISTS <var>name</var> (
+	columnName <var>type</var> <var>constraints</var>,
+	...
+	columnName <var>type</var> <var>constraints</var>
+);
+</code></pre>
+
+<pre class="nolinenumbers"><code class="sql">
+-- example CREATE TABLE query --
+CREATE TABLE IF NOT EXISTS students (
+	id INTEGER,
+	name VARCHAR(20),
+	email VARCHAR(32),
+	password VARCHAR(16)
+);
+</code></pre>
+	
+	<ul>
+		<li>each column's type must be specified (see next slide)
+	</ul>
+</section>
+
+<section>
+	<h1>SQL data types</h1>
+
+	<table class="methodtable boxedtable">
+		<caption>common column data types</caption>
+		<tbody>
+			<tr>
+				<td><code>BLOB</code></td>
+				<td>binary data</td>
+			</tr>
+			<tr>
+				<td><code>DATE</code></td>
+				<td>a year/month/day of the year</td>
+			</tr>
+			<tr>
+				<td><code>DATETIME</code></td>
+				<td>a year/month/day of the year along with an hour:minute:second
+					<ul>
+						<li>sometimes dates/times are stored internally as integers since 1970-01-01 12:00:00am
+					</ul>
+				</td>
+			</tr>
+			<tr>
+				<td><code>INTEGER</code></td>
+				<td>a 32-bit integer
+					<ul>
+						<li>variations: <code>TINYINT</code>, <code>SMALLINT</code>, <code>MEDIUMINT</code>, <code>BIGINT</code>, <code>UNSIGNED BIG INT</code>
+					</ul>
+				</td>
+			</tr>
+			<tr>
+				<td><code>REAL</code> or <code>DOUBLE</code></td>
+				<td>64-bit real number</td>
+			</tr>
+			<tr>
+				<td><code>TEXT</code></td>
+				<td>a string with unspecified length</td>
+			</tr>
+			<tr>
+				<td><code>VARCHAR(<var>length</var>)</code></td>
+				<td>a string with the given max length</td>
+			</tr>
+		</tbody>
+	</table>
+</section>
+
+<section>
+	<h1>Column constraints</h1>
+
+<pre class="nolinenumbers"><code class="sql">
+-- example CREATE TABLE query with column constraints --
+CREATE TABLE students (
+	id INTEGER <em>NOT NULL PRIMARY KEY</em>,
+	name VARCHAR(20) <em>NOT NULL</em>,
+	email VARCHAR(32),
+	password VARCHAR(16) <em>NOT NULL DEFAULT '12345'</em>
+);
+</code></pre>
+	
+	<ul>
+		<li><code>NOT NULL</code>: empty value not allowed in any row for that column
+		<li><code>PRIMARY KEY / UNIQUE</code>: no two rows can have the same value
+		<li><code>DEFAULT <var>value</var></code>: if no value is provided, use the given default
+	</ul>
+</section>
+
+<section>
+	<h1>Deleting a table</h1>
+
+<pre class="nolinenumbers"><code class="sql">
+-- delete an existing table --
+DROP TABLE IF EXISTS <var>name</var>;
+</code></pre>
+
+<pre class="nolinenumbers"><code class="sql">
+-- example DROP TABLE query --
+DROP TABLE IF EXISTS students;
+</code></pre>
+
+	<div class="sqltables">
+		<table class="sqltable deleted">
+			<caption>students</caption>
+			<tr><th>id</th><th>name</th><th>email</th></tr>
+			<tr><td>123</td><td>Bart</td><td>bart@fox.com</td></tr>
+			<tr><td>456</td><td>Milhouse</td><td>milhouse@fox.com</td></tr>
+			<tr><td>888</td><td>Lisa</td><td>lisa@fox.com</td></tr>
+			<tr><td>404</td><td>Ralph</td><td>ralph@fox.com</td></tr>
+		</table>
+
+		<table class="sqltable">
+			<caption>teachers</caption>
+			<tr><th>id</th><th>name</th></tr>
+			<tr><td>1234</td><td>Krabappel</td></tr>
+			<tr><td>5678</td><td>Hoover</td></tr>
+			<tr><td>9012</td><td>Stepp</td></tr>
+		</table>
+
+		<table class="sqltable">
+			<caption>courses</caption>
+			<tr><th>id</th><th>name</th><th>teacher_id</th></tr>
+			<tr><td>10001</td><td>Computer Science 142</td><td>1234</td></tr>
+			<tr><td>10002</td><td>Computer Science 143</td><td>5678</td></tr>
+			<tr><td>10003</td><td>Computer Science 190M</td><td>9012</td></tr>
+			<tr><td>10004</td><td>Informatics 100</td><td>1234</td></tr>
+		</table>
+
+		<table class="sqltable">
+			<caption>grades</caption>
+
+			<tr><th>student_id</th><th>course_id</th><th>grade</th></tr>
+			<tr><td>123</td><td>10001</td><td>B-</td></tr>
+			<tr><td>123</td><td>10002</td><td>C</td></tr>
+			<tr><td>456</td><td>10001</td><td>B+</td></tr>
+			<tr><td>888</td><td>10002</td><td>A+</td></tr>
+			<tr><td>888</td><td>10003</td><td>A+</td></tr>
+			<tr><td>404</td><td>10004</td><td>D+</td></tr>
+		</table>
+	</div>
+</section>
+
+<section>
+	<h1>Modifying an existing table</h1>
+
+<pre class="nolinenumbers"><code class="sql">
+ALTER TABLE <var>name</var> RENAME TO <var>newName</var>;
+
+ALTER TABLE <var>name</var>
+ADD COLUMN <var>columnName</var> <var>type</var> <var>constraints</var>;
+
+ALTER TABLE <var>name</var> DROP COLUMN <var>columnName</var>;
+
+ALTER TABLE <var>name</var>
+CHANGE COLUMN <var>oldColumnName</var> <var>newColumnName</var> <var>type</var> <var>constraints</var>;
+</code></pre>
+
+	<ul>
+		<li>SQL has many commands for modifying existing data
+		<li>the above is not a complete reference!
+	</ul>
+</section>
+
+<section>
+	<h1>Related tables</h1>
+
+	<div class="sqltables">
+		<table class="sqltable">
+			<caption>students</caption>
+			<tr><th>id</th><th>name</th><th>email</th></tr>
+			<tr><td>123</td><td>Bart</td><td>bart@fox.com</td></tr>
+			<tr><td>456</td><td>Milhouse</td><td>milhouse@fox.com</td></tr>
+			<tr><td style="background-color: #f9f;">888</td><td>Lisa</td><td>lisa@fox.com</td></tr>
+			<tr><td>404</td><td>Ralph</td><td>ralph@fox.com</td></tr>
+		</table>
+
+		<table class="sqltable">
+			<caption>teachers</caption>
+			<tr><th>id</th><th>name</th></tr>
+			<tr><td>1234</td><td>Krabappel</td></tr>
+			<tr><td style="background-color: #9f9;">5678</td><td>Hoover</td></tr>
+			<tr><td style="background-color: #9f9;">9012</td><td>Stepp</td></tr>
+		</table>
+
+		<table class="sqltable">
+			<caption>courses</caption>
+			<tr><th>id</th><th>name</th><th>teacher_id</th></tr>
+			<tr><td>10001</td><td>Computer Science 142</td><td>1234</td></tr>
+			<tr><td style="background-color: #ff9;">10002</td><td>Computer Science 143</td><td style="background-color: #9f9;">5678</td></tr>
+			<tr><td style="background-color: #ff9;">10003</td><td>Computer Science 190M</td><td style="background-color: #9f9;">9012</td></tr>
+			<tr><td>10004</td><td>Informatics 100</td><td>1234</td></tr>
+		</table>
+
+		<table class="sqltable">
+			<caption>grades</caption>
+
+			<tr><th>student_id</th><th>course_id</th><th>grade</th></tr>
+			<tr><td>123</td><td>10001</td><td>B-</td></tr>
+			<tr><td>123</td><td>10002</td><td>C</td></tr>
+			<tr><td>456</td><td>10001</td><td>B+</td></tr>
+			<tr><td style="background-color: #f9f;">888</td><td style="background-color: #ff9;">10002</td><td>A+</td></tr>
+			<tr><td style="background-color: #f9f;">888</td><td style="background-color: #ff9;">10003</td><td>A+</td></tr>
+			<tr><td>404</td><td>10004</td><td>D+</td></tr>
+		</table>
+	</div>
+
+	<ul>
+		<li><strong>primary key:</strong> column guaranteed to be unique for each row (ID)
+		<li><strong>normalizing:</strong> splitting tables to improve structure / redundancy
+	</ul>
+</section>
+
+<section>
+	<h1>Join</h1>
+
+<pre class="nolinenumbers"><code class="sql">
+SELECT <var>column(s)</var> FROM <var>table1</var> <var>name1</var>
+JOIN   <var>table2</var> <var>name2</var> ON <var>conditions</var>
+...
+JOIN   <var>tableN</var> <var>nameN</var> ON <var>conditions</var>
+WHERE  <var>conditions</var>;
+</code></pre>
+
+<pre class="nolinenumbers"><code class="sql">
+-- example SELECT query with JOIN to combine multiple tabless --
+SELECT name, course_id, grade
+FROM   students s
+JOIN   grades g ON s.id = g.student_id
+WHERE  s.name = 'Bart';
+</code></pre>
+
+	<ul>
+		<li><code>JOIN</code> combines related records from two or more tables
+			<ul>
+				<li><code>ON</code> clause specifies which records from each table are matched
+				<li>rows are often linked by their key columns (IDs)
+				<li>joins can be tricky to understand;  out of scope of this course
+			</ul>
+	</ul>
+</section>
+
+<!-- END SLIDES AREA -->
+			</div>
+		</div>
+
+		<script src="highlightjs/highlight.pack.js" charset="utf-8"></script>
+		<script src="cs193a-slides.js"></script>
+		<script src="reveal/js/reveal.js"></script>
+		<script>
+			initializeSlides();
+		</script>
+	</body>
+</html>

@@ -1,0 +1,434 @@
+<html>
+	<head>
+		<title>CS 193A - Services</title>
+		<link rel="stylesheet" href="highlightjs/styles/default.css">
+		<link rel="stylesheet" href="reveal/css/reveal.css">
+		<link rel="stylesheet" href="reveal/css/theme/white.css">
+		<link rel="stylesheet" href="cs193a-slides.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+
+<!-- BEGIN SLIDES AREA -->
+
+<section class="titleslide">
+	<h1>CS 193A</h1>
+
+	<p>Services</p>
+</section>
+
+<section>
+	<h1>Services</h1>
+	
+	<ul>
+		<li><strong>service:</strong> A background task used by an app.
+			<ul>
+				<li>Example: Google Play Music plays the music using a service.
+				<li>Example: Web browser runs a downloader service to retrieve a file.
+				<li>Example: Chat app listens for new messages to come in and alerts the user, even if the user is not actively using the chat app.
+			</ul>
+		
+			<ul>
+				<li>Services are useful for long-running tasks, and/or providing functionality that can be used by other applications.
+			</ul>
+	</ul>
+	
+	<div class="figures">
+		<img src="images/services-1.png" alt="figure" />
+	</div>
+</section>
+
+<section>
+	<h1>The service lifecycle</h1>
+	
+	<div class="figuresright">
+		<img src="images/service-lifecycle.png" alt="figure" />
+	</div>
+	
+	<ul>
+		<li>A service is started by an app's activity using an <strong>intent</strong>.
+
+		<li>Service operation modes:
+			<ul>
+				<li>
+					<strong>start:</strong> The service keeps running until it is manually stopped.
+						<span class="aside">(we'll use this one)</span>
+				<li>
+					<strong>bind:</strong> The service keeps running until no "bound" apps are left.
+			</ul>
+
+
+		<li>Services have similar methods to activities for lifecycle events.
+			<ul>
+				<li><code>onCreate</code>, <code>onDestroy</code>
+			</ul>
+	</ul>
+</section>
+
+<section>
+	<h1>Adding a service in Android Studio</h1>
+	
+	<ul>
+		<li>right-click your project's Kotlin package
+		<li>click New &rarr; Service &rarr; Service
+	</ul>
+	
+	<div class="figures">
+		<img src="images/androidstudio-new-service.png" alt="figure" />
+	</div>
+</section>
+
+<section>
+	<h1>AndroidManifest.xml changes</h1>
+	
+	<ul>
+		<li>To allow your app to use the service, add the following to your app's <span class="filename">AndroidManifest.xml</span> configuration:
+			<ul>
+				<li>(Android Studio does this for you if you use the New Service option)
+				<li><code>exported</code> attribute signifies whether other apps are also allowed to use the service  (true=yes, false=no)
+				<li>note that you must write a dot ( <code>.</code> ) before the class name below
+			</ul>
+	</ul>
+	
+	<pre><code class="xml">
+&lt;application ...&gt;
+
+	&lt;<em>service</em>
+		android:name=&quot;.<var>ServiceClassName</var>&quot;
+		android:enabled=&quot;true&quot;
+		android:exported=&quot;false&quot; /&gt;
+</code></pre>
+</section>
+
+<section>
+	<h1>Service class template</h1>
+	
+	<pre><code class="kotlin">
+class <var>ServiceClassName</var> <em>: Service()</em> {
+	/* handles each incoming request */
+	override fun onStartCommand(intent: Intent?, flags: Int, id: Int): Int {
+		// unpack any parameters that were passed to us
+		if (intent != null) {
+			val <var>value1</var> = intent.getStringExtra("<var>key1</var>")
+			val <var>value2</var> = intent.getIntExtra("<var>key2</var>")
+
+			// do the work that the service needs to do ...
+		}
+
+		return START_STICKY   // stay running
+	}
+
+	<span class="aside">override fun onBind(intent: Intent?): IBinder? {
+		return null   // disable binding
+	}</span>
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>Starting a service</h1>
+	
+	<ul>
+		<li>In your activity class:
+			
+			<pre><code class="kotlin">
+val intent = Intent(this, <var>ServiceClassName</var>::class.java)
+intent.putExtra("<var>key1</var>", <var>value1</var>)
+intent.putExtra("<var>key2</var>", <var>value2</var>)
+<em>startService</em>(intent)   // not startActivity!
+</code></pre>
+		
+		<li>or if the same code is launched from a fragment:
+			
+			<pre><code class="kotlin">
+val intent = Intent(<em>activity</em>, <var>ServiceClassName</var>::class.java) ...
+</code></pre>
+
+		<!--
+		<li>or if using the Stanford library, in your <code>SimpleActivity</code> class:
+
+			<pre><code class="kotlin">
+startService(<var>ServiceClassName</var>.class, "<var>key1</var>" to <var>value1</var>, ...)
+</code></pre>
+		-->
+	</ul>
+</section>
+
+<section>
+	<h1>Intent actions</h1>
+	
+	<ul>
+		<li>Often a service has several "actions" or commands it can perform.
+			<ul>
+				<li>Example: A music player service can play, stop, pause, ...
+				<li>Example: A chat service can send, receive, ...
+			</ul>
+		
+		<li>Android implements this with <code>action</code> property in <code>Intent</code>
+			<pre><code class="kotlin">
+// in your Activity class
+val intent = Intent(this, <var>ServiceClassName</var>::class.java)
+<em>intent.action = "<var>action</var>"</em>
+intent.putExtra("<var>key1</var>", <var>value1</var>)
+startService(intent)
+</code></pre>
+
+			<pre><code class="kotlin">
+// in your Service class
+if (<em>intent.action</em> == "<var>action</var>") { ... }
+</code></pre>
+	</ul>
+</section>
+
+<section>
+	<h1>Broadcasts</h1>
+	
+	<div class="figuresright">
+		<img src="images/broadcast.png" alt="broadcast" />
+	</div>
+	
+	<ul>
+		<li><strong>broadcast:</strong> a message sent from a service
+			<ul>
+				<li>a way for a service to pop up an app or UI to respond to events
+			</ul>
+		
+		<li>two steps:
+			<ol>
+				<li>the <strong>service</strong> must <strong>send</strong> a broadcast to indicate that work is done
+				<li>the <strong>activity</strong>/app must <strong>receive</strong> the broadcast to hear the message
+			</ol>
+	</ul>
+</section>
+
+<section>
+	<h1>Broadcasting a result</h1>
+	
+	<ul>
+		<li>When a service has completed a task, it can notify the app by "sending a <strong>broadcast</strong>" which the app can listen for.
+			<ul>
+				<li>As before, set an <strong>action</strong> in the intent to distinguish different kinds of results.
+			</ul>
+	</ul>
+	
+	<pre><code class="kotlin">
+class <var>ServiceClassName</var> : Service() {
+	override fun onStartCommand(intent: Intent?, flags: Int, id: Int): Int {
+		// do the work that the service needs to do ...
+		...
+		// broadcast that the work is done
+		val done = Intent()
+		done.action = "<var>action</var>"
+		done.putExtra("<var>key1</var>", <var>value1</var>) ...
+		<em>sendBroadcast(done)</em>
+
+		return START_STICKY   // stay running
+	}
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>Receiving a broadcast</h1>
+	
+	<ul>
+		<li>Your activity can hear broadcasts using a <code class="androidapi" data-class="android.content.BroadcastReceiver">BroadcastReceiver</code>.
+			<ul>
+				<li>Extend <code>BroadcastReceiver</code> with the code to handle the message.
+				<li>Any extra parameters in the message come from the service's intent.
+			</ul>
+	</ul>
+	
+	<pre><code class="kotlin">
+class <var>ActivityClassName</var> : AppCompatActivity() {
+	...
+
+	private inner class <var>ReceiverClassName</var> : BroadcastReceiver() {
+		<em>override fun onReceive(context: Context, intent: Intent)</em> {
+			// handle the received broadcast message
+			...
+		}
+	}
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>Listening for broadcasts</h1>
+	
+	<ul>
+		<li>set your activity to be notified when broadcast actions occur.
+			<ul>
+				<li>pass an <code class="androidapi" data-class="android.content.IntentFilter">IntentFilter</code> specifying action(s) of interest
+			</ul>
+	</ul>
+	
+	<pre><code class="kotlin">
+class <var>ActivityClassName</var> : AppCompatActivity() {
+	override fun onCreate(state: Bundle?) {
+		...
+		val filter = IntentFilter()
+		filter.addAction("<var>action</var>")
+		<em>registerReceiver(<var>ReceiverClassName</var>(), filter)</em>
+	}
+
+</code></pre>
+</section>
+
+<!--
+<section>
+	<h1>
+		Lib: Simple Broadcasts
+		<img class="stanfordliblogo" src="images/stanford-logo-icon.png" alt="figure" />
+	</h1>
+	
+	
+	<ul>
+		<li>A <code class="stanfordandroidlibraryapi" data-class="stanford.androidlib.SimpleActivity">SimpleActivity</code> can act as a broadcast receiver.
+			<ul>
+				<li>No need for intent filter or separate broadcast receiver class.
+				<li>Just override <code>onBroadcastReceived</code> method.
+			</ul>
+	</ul>
+	
+	<pre><code class="kotlin">
+public class <var>ActivityClassName</var> <em>extends SimpleActivity</em> {
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// register for any broadcasts you want to receive
+		// (no need for IntentFilter or BroadcastReceiver class)
+		<em>registerReceiver</em>("<var>action1</var>", "<var>action2</var>", ..., "<var>actionN</var>");
+	}
+
+	@Override
+	public void <em>onBroadcastReceived</em>(Intent intent) {
+		// code to handle the received broadcast
+	}
+}
+</code></pre>
+</section>
+-->
+
+<section>
+	<h1>Services and threading</h1>
+	
+	<div class="figuresright">
+		<img src="images/services-thread-ui-lockup.png" alt="figure" />
+	</div>
+	
+	<ul>
+		<li>By default, a service lives in the same <strong>process</strong> and <strong>thread</strong> as the app that created it.
+			<ul>
+				<li>Not ideal for long-running tasks.
+				<li>If the service is busy, the app's UI will freeze up.
+				
+				<li>Example: If a downloader app downloads a large/slow file, the UI will freeze during the download.
+			</ul>
+		
+		<li>To make the service more independent and responsive, it should handle tasks in <strong>threads</strong>.
+	</ul>
+</section>
+
+<section>
+	<h1>Service with threads</h1>
+	
+	<pre><code class="kotlin">
+class <var>ServiceClassName</var> : Service() {
+	/* handles each incoming request */
+	override fun onStartCommand(intent: Intent?, flags: Int, id: Int): Int {
+		if (intent != null) {
+			// unpack any parameters that were passed to us
+			val value1 = intent.getStringExtra("<var>key1</var>")
+
+			// handle each task in its own thread (run in background)
+			<em>val thread = Thread {</em>
+				// do the work that the service needs to do
+				...
+			<em>}</em>
+			<em>thread.start()</em>
+		}
+
+		return START_STICKY   // stay running
+	}
+</code></pre>
+</section>
+
+<section>
+	<h1>IntentService</h1>
+	
+	<ul>
+		<li>class <code class="androidapi" data-class="android.app.IntentService">IntentService</code>  (subclass of <code class="androidapi" data-class="android.app.Service">Service</code>) runs all of its tasks in a single extra thread
+			<ul>
+				<li>great for a queue of long-running tasks to do one-at-a-time
+				<li>instead of overriding <code>onStartCommand</code>, use <code>onHandleIntent</code>
+			</ul>
+	</ul>
+	
+	<pre><code class="kotlin">
+class <var>Name</var> <em>: IntentService()</em> {
+	/* handles each incoming request in a shared worker thread */
+	override fun <em>onHandleIntent</em>(intent: Intent?) {
+		// paste code from onStartCommand here
+		...
+	}
+}
+</code></pre>
+</section>
+
+<!--
+<section>
+	<h1>
+		Lib: SimpleService
+		<img class="stanfordliblogo" src="images/stanford-logo-icon.png" alt="figure" />
+	</h1>
+	
+	
+	<ul>
+		<li><code class="stanfordandroidlibraryapi" data-class="stanford.androidlib.SimpleService">SimpleService</code> class has a few convenience methods for handling intents and broadcasts
+	</ul>
+	
+	<pre><code class="kotlin">
+public class Name <em>extends SimpleService</em> {
+	public int onStartCommand(Intent intent, int flags, int id) {
+		...
+</code></pre>
+</section>
+
+<section>
+	<h1>
+		Lib: SimpleService methods
+		<img class="stanfordliblogo" src="images/stanford-logo-icon.png" alt="figure" />
+	</h1>
+	
+	<table>
+		<tr>
+			<th>Method</th>
+			<th>Description</th>
+		</tr>
+		
+		<tr>
+			<td><code>onStartInThread(<var>intent</var>)</code></td>
+			<td>override this to handle tasks in their own threads</td>
+		</tr>
+		
+		<tr>
+			<td><code>sendBroadcast("<var>action</var>", <var>params</var>)</code></td>
+			<td>convenience method to send a broadcast without using an <code>Intent</code></td>
+		</tr>
+	</table>
+</section>
+-->
+
+<!-- END SLIDES AREA -->
+			</div>
+		</div>
+
+		<script src="highlightjs/highlight.pack.js" charset="utf-8"></script>
+		<script src="cs193a-slides.js"></script>
+		<script src="reveal/js/reveal.js"></script>
+		<script>
+			initializeSlides();
+		</script>
+	</body>
+</html>

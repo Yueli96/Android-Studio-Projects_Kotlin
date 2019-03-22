@@ -1,0 +1,229 @@
+<html>
+	<head>
+		<title>CS 193A - Preferences</title>
+		<link rel="stylesheet" href="highlightjs/styles/default.css">
+		<link rel="stylesheet" href="reveal/css/reveal.css">
+		<link rel="stylesheet" href="reveal/css/theme/white.css">
+		<link rel="stylesheet" href="cs193a-slides.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+
+<!-- BEGIN SLIDES AREA -->
+
+<section class="titleslide">
+	<h1>CS 193A</h1>
+
+	<p>Preferences</p>
+</section>
+
+<section>
+	<h1>Preferences</h1>
+	
+	<div class="figuresright">
+		<img src="images/shared-preferences.png" alt="figure" />
+	</div>
+
+	<ul>
+		<li><code class="androidapi" data-class="android.content.SharedPreferences">SharedPreferences</code> object can store permanent settings and data for your app.
+			<ul>
+				<li>stores key/value pairs similar to a <code class="androidapi" data-class="android.os.Bundle">Bundle</code> or <code class="androidapi" data-class="android.content.Intent">Intent</code>
+				<li>pairs added to <code>SharedPreferences</code> persist after shutdown/reboot (unlike <code>savedInstanceState</code> bundles)
+			</ul>
+		<li>Two ways to use it:
+			<ul>
+				<li>per-activity (<code>getPreferences</code>)
+				<li>per-app (<code>getSharedPreferences</code>)
+			</ul>
+	</ul>
+</section>
+
+<section>
+	<h1>SharedPreferences example</h1>
+	
+	<ul>
+		<li>Saving preferences for the activity (in <code>onPause</code>, <code>onStop</code>):
+	</ul>
+	
+	<pre><code class="kotlin">
+val prefs = getPreferences(MODE_PRIVATE)
+val editor = prefs.edit()
+editor.putInt("<var>name</var>", <var>value</var>)
+editor.putString("<var>name</var>", <var>value</var>)
+...
+editor.apply()   // or commit()
+</code></pre>
+
+	<ul>
+		<li>Loading preferences later (e.g. in <code>onCreate</code>):
+	</ul>
+	
+	<pre><code class="kotlin">
+val prefs = getPreferences(MODE_PRIVATE)
+val i = prefs.getInt("<var>name</var>", <var>defaultValue</var>)
+val s = prefs.getString("<var>name</var>", "<var>defaultValue</var>")
+...
+</code></pre>
+</section>
+
+<section>
+	<h1>Multiple pref files</h1>
+	
+	<ul>
+		<li>You can call <code>getSharedPreferences</code> and supply a file name if you want to have multiple pref. files for the same activity:
+		<ul>
+			<li class="aside">(Note: Usually you don't want this form.
+				It is rare that one activity needs multiple preference files.
+				The existing <code>getPreferences</code> can store many different preferences in it.)
+		</ul>
+	</ul>
+	
+	<pre><code class="kotlin">
+<strike>val prefs = getPreferences(MODE_PRIVATE)</strike>
+val prefs = <em>getSharedPreferences</em>("<var>filename</var>", MODE_PRIVATE)
+val editor = prefs.edit()
+editor.putInt("<var>name</var>", <var>value</var>)
+editor.putString("<var>name</var>", <var>value</var>)
+...
+editor.apply()
+</code></pre>
+</section>
+
+<!--
+<section>
+	<h1>
+		Lib: SimplePreferences
+		<img class="stanfordliblogo" src="images/stanford-logo-icon.png" alt="figure" />
+	</h1>
+	
+	<table class="methodtable">
+		<tr>
+			<th>Method</th>
+			<th>Description</th>
+		</tr>
+		
+		<tr>
+			<td><code>with(<var>activity</var>)</code></td>
+			<td>returns a <code>SimplePreferences</code> instance</td>
+		</tr>
+		
+		<tr>
+			<td><code>set("<var>name</var>", <var>value</var>)</code></td>
+			<td>sets an app preference</td>
+		</tr>
+		
+		<tr>
+			<td><code>getBoolean("<var>name</var>")</code></td>
+			<td>returns an app preference</td>
+		</tr>
+		
+		<tr>
+			<td><code>getDouble("<var>name</var>")</code></td>
+			<td>returns an app preference</td>
+		</tr>
+		
+		<tr>
+			<td><code>getInt("<var>name</var>")</code></td>
+			<td>returns an app preference</td>
+		</tr>
+		
+		<tr>
+			<td><code>getLong("<var>name</var>")</code></td>
+			<td>returns an app preference</td>
+		</tr>
+		
+		<tr>
+			<td><code>getString("<var>name</var>")</code></td>
+			<td>returns an app preference</td>
+		</tr>
+		
+		<tr>
+			<td><code>contains("<var>name</var>")</code> <br />
+				<code>has("<var>name</var>")</code></td>
+			<td>true if given preference is set</td>
+		</tr>
+	</table>
+	
+	<pre><code class="kotlin">
+// easier version of SharedPreferences object
+SimplePreferences.with(this)
+	.set("username", "stepp")
+...
+String username = SimplePreferences.with(this)
+	.getString("username")
+</code></pre>
+</section>
+
+<section>
+	<h1>
+		Lib: Shared preferences
+		<img class="stanfordliblogo" src="images/stanford-logo-icon.png" alt="figure" />
+	</h1>
+	
+	<table class="methodtable">
+		<tr>
+			<th>Method</th>
+			<th>Description</th>
+		</tr>
+		
+		<tr>
+			<td><code>setShared("<var>filename</var>", "<var>name</var>", <var>value</var>)</code></td>
+			<td>sets a shared preference</td>
+		</tr>
+		
+		<tr>
+			<td><code>getSharedBoolean("<var>filename</var>", "<var>name</var>")</code></td>
+			<td>returns a preference</td>
+		</tr>
+		
+		<tr>
+			<td><code>getSharedDouble("<var>filename</var>", "<var>name</var>")</code></td>
+			<td>returns a preference</td>
+		</tr>
+		
+		<tr>
+			<td><code>getSharedInt("<var>filename</var>", "<var>name</var>")</code></td>
+			<td>returns a preference</td>
+		</tr>
+		
+		<tr>
+			<td><code>getSharedLong("<var>filename</var>", "<var>name</var>")</code></td>
+			<td>returns a preference</td>
+		</tr>
+		
+		<tr>
+			<td><code>getSharedString("<var>filename</var>", "<var>name</var>")</code></td>
+			<td>returns a preference</td>
+		</tr>
+		
+		<tr>
+			<td><code>containsShared("<var>name</var>")</code> <br />
+				<code>hasShared("<var>name</var>")</code></td>
+			<td>true if given shared preference is set</td>
+		</tr>
+	</table>
+	
+	<pre><code class="kotlin">
+// easier version of SharedPreferences object
+SimplePreferences.with(this)
+	.setShared("myfile", "username", "stepp")
+...
+String username = SimplePreferences.with(this)
+	.getSharedString("myfile", "username")
+</code></pre>
+</section>
+-->
+
+<!-- END SLIDES AREA -->
+			</div>
+		</div>
+
+		<script src="highlightjs/highlight.pack.js" charset="utf-8"></script>
+		<script src="cs193a-slides.js"></script>
+		<script src="reveal/js/reveal.js"></script>
+		<script>
+			initializeSlides()
+		</script>
+	</body>
+</html>

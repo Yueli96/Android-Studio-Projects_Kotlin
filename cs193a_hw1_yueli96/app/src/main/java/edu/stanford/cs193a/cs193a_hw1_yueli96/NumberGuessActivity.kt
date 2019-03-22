@@ -61,6 +61,6 @@ class NumberGuessActivity : AppCompatActivity() {
     fun pickRandomNumber(){
         val r = Random()
         target = r.nextInt(1000) + 1
-        //println("target: $target")
+        println("target: $target")
     }
 }

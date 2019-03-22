@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="treechat_description">和朋友们的聊天软件</string>
+    <string name="tree_chat" translatable="false">群聊</string>
+    <string name="create_account">创建账号</string>
+    <string name="sign_in">登陆</string>
+    <string name="sign_up">创建账号</string>
+    <string name="sign_up_treechat">创建群聊账号</string>
+    <string name="sign_in_treechat">登陆群聊</string>
+    <string name="email_address">邮箱地址</string>
+    <string name="password">密码</string>
+    <string name="sign_up_error">创建失败：不合法的邮箱或邮箱账号已存在</string>
+    <string name="sign_up_success">创建成功</string>
+    <string name="sign_in_error">登陆失败：无效的账号或密码</string>
+    <string name="sign_in_error_google">谷歌登陆失败</string>
+    <string name="sign_in_success">登陆成功</string>
+    <string name="channel_list">频道</string>
+    <string name="choose_channel">选择频道或创建自己的频道</string>
+    <string name="input_channel_name">名字</string>
+    <string name="input_channel_description">描述</string>
+    <string name="create">创建</string>
+    <string name="send">发送</string>
+    <string name="exit">退出</string>
+    <string name="create_channel_error">请输入频道名称</string>
+    <string name="channel_exist_error">频道已存在</string>
+    <string name="channel_create_success">创建成功</string>
+    <string name="remember_me">记住我</string>
+    <string name="input_message">输入消息</string>
+</resources>

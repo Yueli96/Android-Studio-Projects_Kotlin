@@ -1,0 +1,640 @@
+<html>
+	<head>
+		<title>CS 193A - Kotlin</title>
+		<link rel="stylesheet" href="highlightjs/styles/default.css">
+		<link rel="stylesheet" href="reveal/css/reveal.css">
+		<link rel="stylesheet" href="reveal/css/theme/white.css">
+		<link rel="stylesheet" href="cs193a-slides.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+
+<!-- BEGIN SLIDES AREA -->
+
+<section class="titleslide">
+	<h1>CS 193A</h1>
+
+	<p>
+		Kotlin Programming
+	</p>
+</section>
+
+<section>
+	<h1>What is Kotlin?</h1>
+
+	<div class="figuresright">
+		<img src="images/kotlin-logo.svg" alt="image" style="width: 6em;" />
+	</div>
+
+	<ul>
+		<li>a statically typed programming language that runs on the Java VM</li>
+		<li>sponsored and developed by JetBrains (makers of IntelliJ IDEA)</li>
+		<li>can interoperate with Java code and libraries</li>
+		<li>As of Android Studio 3.0, the primary Android development language</li>
+		<li><a class="popup" href="http://kotlinlang.org/">kotlinlang.org</a></li>
+	</ul>
+</section>
+
+<section>
+	<h1>Printing</h1>
+	
+	<div class="sidebyside">
+		<pre><code class="java">
+// Java
+System.out.print("Hello");
+System.out.println("Hello, world!");
+</code></pre>
+		
+		<hr />
+	
+		<pre><code class="kotlin">
+// Kotlin
+print("Hello")
+println("Hello, world!")
+</code></pre>
+</section>
+
+<section>
+	<h1>Variables</h1>
+	
+	<div class="sidebyside">
+		<pre><code class="java">
+// Java
+int i = 10;
+i += 20;
+
+final double d = 4.50;   // constant
+</code></pre>
+		
+		<hr />
+	
+		<pre><code class="kotlin">
+// Kotlin
+var i = 10       // var = mutable
+var i: Int = 10   // optional type
+i += 20
+
+val d = 4.50     // val = constant
+</code></pre>
+</section>
+
+<section>
+	<h1>
+		Types
+		(<a class="popup" href="https://kotlinlang.org/docs/reference/basic-types.html">docs</a>)
+	</h1>
+	
+	<div class="sidebyside">
+		<pre><code class="java">
+// Java
+boolean b = true;
+char c = 'X';
+double d = 3.14;
+int i = 10;
+long l = 999999999999;
+String s = "hello";
+
+int id = (int) d;         // type conversion
+double di = (double) i;
+</code></pre>
+		
+		<hr />
+	
+		<pre><code class="kotlin">
+// Kotlin
+val b: Boolean = true
+val c: Char = 'X'
+val d: Double = 3.14
+val i: Int = 10
+val l: Long = 999999999999
+val s: String = "hello"
+
+val id: Int = d.toInt()         // type conversion
+val di: Double = i.toDouble()
+</code></pre>
+</section>
+
+<section>
+	<h1>
+		Strings
+		(<a class="popup" href="https://kotlinlang.org/docs/reference/basic-types.html#strings">docs</a>)
+	</h1>
+	
+	<div class="sidebyside">
+		<pre><code class="java">
+// Java
+String first = "Johnathan";
+String last  = "Smith";
+String text = "My name is: " + first + " " + last;
+String initial = "Mr. " + first.substring(0, 4);
+ 
+String message = "Hello\n" +
+	"How are you?\n" +
+	"I am fine.\n";
+</code></pre>
+		
+		<hr />
+	
+		<pre><code class="kotlin">
+// Kotlin
+val first = "Johnathan"
+val last  = "Smith"
+val text = "My name is: $first $last"
+val initial = "Mr. ${name.substring(0, 4)}"
+ 
+val message = """
+Hello
+How are you?
+I am fine.
+"""
+</code></pre>
+
+	<ul>
+		<li>
+			<a class="popup" href="https://www.codestepbystep.com/problem/view/kotlin/strings/marshallMathers">
+				<img src="images/codestepbystep-icon.png" class="icon" alt="icon" />
+				practice: MarshallMathers</a>
+	</ul>
+</section>
+
+<section>
+	<h1>
+		Loops
+		(<a class="popup" href="https://kotlinlang.org/docs/reference/control-flow.html">docs</a>)
+	</h1>
+	
+	<div class="sidebyside">
+		<pre><code class="java">
+// Java
+for (int i = 1; i &lt; 10; i++) {...}
+for (int i = 1; i &lt; 10; i += 2) {...}
+for (int i = 10; i &gt; 0; i--) {...}
+for (String s : collection) {...}
+for (String key : map.keySet()) {...}
+</code></pre>
+		
+		<hr />
+	
+		<pre><code class="kotlin">
+// Kotlin
+repeat (10) {...}
+for (i in 1..10) {...}
+for (i in 1..10 step 2) {...}
+for (i in 10 downto 0 step -1) {...}
+for (s in collection) {...}
+for ((i, s) in collection.withIndex()) {...}
+for ((key, value) in map) {...}
+</code></pre>
+
+	<ul>
+		<li>
+			<a class="popup" href="https://www.codestepbystep.com/problem/view/kotlin/loops/numberLoops1">
+				<img src="images/codestepbystep-icon.png" class="icon" alt="icon" />
+				practice: numberLoops</a>
+	</ul>
+</section>
+
+<section>
+	<h1>
+		If/Else
+		(<a class="popup" href="https://kotlinlang.org/docs/reference/control-flow.html">docs</a>)
+	</h1>
+	
+	<div class="sidebyside">
+		<pre><code class="java">
+// Java
+if (<var>test</var>) {
+	<var>statement</var>;
+} else if (<var>test</var>) {
+	<var>statement</var>;
+} else {
+	<var>statement</var>;
+}
+</code></pre>
+		
+		<hr />
+	
+		<pre><code class="kotlin">
+// Kotlin - same as Java
+if (<var>test</var>) {
+	<var>statement</var>
+} else if (<var>test</var>) {
+	<var>statement</var>
+} else {
+	<var>statement</var>
+}
+</code></pre>
+
+	<ul>
+		<li>
+			<a class="popup" href="https://www.codestepbystep.com/problem/view/kotlin/ifelse/gpa">
+				<img src="images/codestepbystep-icon.png" class="icon" alt="icon" />
+				practice: gpa</a>
+	</ul>
+</section>
+
+<section>
+	<h1>
+		The <code>when</code> statement
+	</h1>
+	
+	<div class="sidebyside">
+		<pre><code class="kotlin">
+when (<var>expression</var>) {
+	<var>value</var> -&gt; <var>code</var>
+	<var>value</var> -&gt; <var>code</var>
+	...
+	<var>value</var> -&gt; <var>code</var>
+	else  -&gt; <var>code</var>
+}
+</code></pre>
+
+		<pre><code class="kotlin">
+// example: print Olympic medal based on place you finished
+when (place) {
+	1 -&gt; println(&quot;gold!&quot;)
+	2 -&gt; println(&quot;silver&quot;)
+	3 -&gt; println(&quot;bronze&quot;)
+	else -&gt; println(&quot;no medal&quot;)
+}
+</code></pre>
+
+	<ul>
+		<li>
+			similar to Java/C/C++ <code>switch</code> statement
+	</ul>
+</section>
+
+<section>
+	<h1>
+		Arrays and Lists
+		(<a class="popup" href="https://kotlinlang.org/docs/reference/collections.html">docs</a>)
+	</h1>
+	
+	<div class="sidebyside">
+		<pre><code class="java">
+// Java
+int[] nums = {10, 20, 30};
+ArrayList&lt;String&gt; words = new ArrayList&lt;&gt;();
+words.add("Hello");
+words.add("Goodbye");
+
+int num = nums[0];
+String word = words.get(1);
+if (words.contains("Hello")) {...}
+</code></pre>
+		
+		<hr />
+	
+		<pre><code class="kotlin">
+// Kotlin
+val nums1: Array&lt;Int&gt; = arrayOf(10, 20, 30)
+val nums2: List&lt;Int&gt; = listOf(10, 20, 30)        // cannot be modified
+val words = mutableListOf("Hello", "Goodbye")   // can be modified
+words.add("Yay")
+
+val num = nums[0]
+val word = words[1]
+if ("Hello" in words) {...}
+</code></pre>
+
+	<ul>
+		<li>
+			<a class="popup" href="https://www.codestepbystep.com/problem/view/kotlin/collections/list/countInRange">
+				<img src="images/codestepbystep-icon.png" class="icon" alt="icon" />
+				practice: countInRange</a>
+		<li>
+			<a class="popup" href="https://www.codestepbystep.com/problem/view/kotlin/collections/list/addStars">
+				<img src="images/codestepbystep-icon.png" class="icon" alt="icon" />
+				practice: addStars</a>
+	</ul>
+</section>
+
+<section>
+	<h1>
+		Maps
+		(<a class="popup" href="https://kotlinlang.org/docs/reference/collections.html">docs</a>)
+	</h1>
+	
+	<div class="sidebyside">
+		<pre><code class="java">
+// Java
+HashMap&lt;String, Integer&gt; salaries = new HashMap&lt;&gt;();
+salaries.put("Marty", 20);
+salaries.put("Mehran", 999999);
+
+int martyPay = salaries.get("Marty");
+if (salaries.containsKey("Mehran")) {...}
+</code></pre>
+		
+		<hr />
+	
+		<pre><code class="kotlin">
+// Kotlin
+val salaries: Map&lt;String, Int&gt; = mapOf(
+		"Marty" to 20, "Mehran" to 999999)   // or hashMapOf
+val accounts = mutableMapOf("Marty" to 123.50)
+accounts["Mehran"] = 999.00
+
+val martyPay = salaries["Marty"]
+if ("Mehran" in salaries) {...}
+</code></pre>
+
+	<ul>
+		<li>
+			<a class="popup" href="https://www.codestepbystep.com/problem/view/kotlin/collections/map/leastCommon">
+				<img src="images/codestepbystep-icon.png" class="icon" alt="icon" />
+				practice: leastCommon</a>
+	</ul>
+</section>
+
+<section>
+	<h1>
+		Nullness
+		(<a class="popup" href="https://kotlinlang.org/docs/reference/null-safety.html">docs</a>)
+	</h1>
+	
+	<div class="sidebyside">
+		<pre><code class="java">
+// Java
+String name = null;
+int length = name.length();        // crashes at runtime :-(
+if (name != null) {
+	int length = name.length();    // ok
+}
+</code></pre>
+		
+		<hr />
+	
+		<pre><code class="kotlin">
+// Kotlin
+val bad: String = null             // compiler error! can't be null
+val name: String? = null           // ok
+val length = name.length()         // compiler error!
+val length = name?.length() ?: 0   // ok
+if (name != null) {
+	val length = name.length()     // ok
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>Nullness, cont'd</h1>
+	
+	<div class="sidebyside">
+		<pre><code class="java">
+// Java
+BankAccount acct = bank.maybeGetAccount();   // could be null
+acct.deposit(5.00);                          // could crash
+</code></pre>
+		
+		<hr />
+	
+		<pre><code class="kotlin">
+// Kotlin
+val acct: BankAccount? = bank.maybeGetAccount()   // could be null
+acct.deposit(5.00)                                // compiler error!
+acct?.deposit(5.00)                               // ok
+if (acct != null) {
+	acct.deposit(5.00)                            // ok
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>
+		Functions - Java
+	</h1>
+	
+	<div class="sidebyside">
+		<pre><code class="java">
+// Java
+public int foo(String text, int n) {
+	if (text == null) {
+		return 0;
+	} else {
+		return text.length() / n;
+	}
+}
+
+public int foo(String text) {
+	foo(text, 2);
+}
+...
+int result1 = foo("Hello World!", 3);
+int result2 = foo("Hello World!");
+</code></pre>
+</section>
+
+<section>
+	<h1>
+		Functions - Kotlin
+		(<a class="popup" href="https://kotlinlang.org/docs/reference/functions.html">docs</a>)
+	</h1>
+	
+	<div class="sidebyside">
+		<pre><code class="kotlin">
+// Kotlin
+fun foo(s: String, n: Int = 2): Int {       // null cannot be passed
+	return s.length() / n
+}
+...
+val result = foo("Hello World!")
+val result = foo(s: "Hello World!", n: 3)   // optional/named parameters
+</code></pre>
+
+	<ul>
+		<li>
+			<a class="popup" href="https://www.codestepbystep.com/problem/view/kotlin/parameters/factorCount">
+				<img src="images/codestepbystep-icon.png" class="icon" alt="icon" />
+				practice: factorCount</a>
+	</ul>
+</section>
+
+<section>
+	<h1>
+		Lambdas
+		(<a class="popup" href="https://kotlinlang.org/docs/reference/lambdas.html">docs</a>)
+	</h1>
+	
+	<div class="sidebyside">
+		<pre><code class="java">
+// Java
+int[] list = {1, 2, 3, 4, 5, 6};
+for (int i = 0; i < list.length; i++) {
+	list[i] = list[i] * list[i];         // [1, 4, 9, 16, 25, 36]
+}
+...
+</code></pre>
+		
+		<hr />
+	
+		<pre><code class="kotlin">
+var list = listOf(1, 2, 3, 4, 5, 6)
+list = list.map({n -&gt; n * n})            // [1, 4, 9, 16, 25, 36]
+list = list.filter({n -&gt; n % 2 == 0})    // [4, 16, 36]
+val sum = list.reduce({x, y -&gt; x + y})   // 56
+</code></pre>
+</section>
+
+<section>
+	<h1>Main function</h1>
+	
+	<div class="sidebyside">
+		<pre><code class="java">
+// Java
+public class Example {
+	public static void main(String[] args) {
+		System.out.println("Hello, world!");
+	}
+}
+</code></pre>
+		
+		<hr />
+	
+		<pre><code class="kotlin">
+// Kotlin
+fun main(args: Array&lt;String&gt;) {
+	println("Hello, world!")
+}
+</code></pre>
+
+	<ul>
+		<li>
+			<a class="popup" href="https://www.codestepbystep.com/problem/view/kotlin/basics/helloWorld">
+				<img src="images/codestepbystep-icon.png" class="icon" alt="icon" />
+				practice: HelloWorld</a>
+	</ul>
+</section>
+
+<section>
+	<h1>
+		Classes - Java
+	</h1>
+	
+	<div class="sidebyside">
+		<pre><code class="java">
+// Java
+public class Employee {
+	private String name;
+	private int years;
+	
+	// constructor
+	public Employee(String name) {
+		this.name = name;
+		this.years = 0;
+	}
+	
+	// methods
+	public String getName() { return name; }
+	public int getYears() { return years; }
+	public void setYears(int years) { this.years = years; }
+	public void work() { System.out.println("Working hard!"); }
+}
+...
+Employee ed = new Employee("Ed");
+System.out.println("his name is " + ed.getName());   // getter method access
+ed.setYears(5);                                      // setter method
+ed.work();
+</code></pre>
+</section>
+
+<section>
+	<h1>
+		Classes - Kotlin
+		(<a class="popup" href="https://kotlinlang.org/docs/reference/classes.html">docs</a>)
+	</h1>
+	
+	<div class="sidebyside">
+		<pre><code class="kotlin">
+// Kotlin
+class Employee(val name: String) {
+	var years: Int = 0
+	
+	// methods - get/set are autogenerated (val/var)
+	fun work() { println("Working hard!") }
+}
+...
+val ed = Employee("Ed")
+println("his name is " + ed.<strong>name</strong>)   // property access
+ed.years = 5                        // property setter
+ed.work()
+</code></pre>
+</section>
+
+<section>
+	<h1>Inheritance - Java</h1>
+	
+	<div class="sidebyside">
+		<pre><code class="java">
+// Java
+public class Employee ...
+
+public class Lawyer extends Employee {
+	private double salary;
+	
+	// constructor
+	public Lawyer(String name, double salary) {
+		super(name);
+		this.salary = salary;
+	}
+	
+	// methods
+	public double getSalary() { return salary; }
+	public void setSalary(double salary) { this.salary = salary; }
+	public void sue() { System.out.println("See you in court!"); }
+	public void work() { System.out.println("Working VERY hard!"); }   // override
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>
+		Inheritance - Kotlin
+		(<a class="popup" href="https://kotlinlang.org/docs/reference/classes.html#inheritance">docs</a>)
+	</h1>
+	
+	<div class="sidebyside">
+		<pre><code class="kotlin">
+// Kotlin
+<strong>open</strong> class Employee ...
+
+class Lawyer(name: String, var salary: Double) : Employee(name) {
+	// methods
+	fun sue() { println("See you in court!") }
+	<strong>override</strong> fun work() { println("Working VERY hard!") }
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>
+		Learning Kotlin - Summary
+	</h1>
+
+	<div class="figuresright">
+		<img src="images/kotlin-logo.svg" alt="image" style="width: 6em;" />
+	</div>
+	
+	<ul>
+		<li>This is (obviously) not a complete tutorial of the language!
+		<li>Start from your Java knowledge and work from there
+		<li>Don't be afraid to Google for tutorials or language features
+		<li>Look to Android-specific tutorials and examples
+		<li>You can do it!
+	</ul>
+</section>
+
+<!-- END SLIDES AREA -->
+			</div>
+		</div>
+
+		<script src="highlightjs/highlight.pack.js" charset="utf-8"></script>
+		<script src="cs193a-slides.js"></script>
+		<script src="reveal/js/reveal.js"></script>
+		<script>
+			initializeSlides();
+		</script>
+	</body>
+</html>

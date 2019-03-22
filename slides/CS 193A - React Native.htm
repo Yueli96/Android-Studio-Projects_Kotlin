@@ -1,0 +1,516 @@
+<html>
+	<head>
+		<title>CS 193A - React Native</title>
+		<link rel="stylesheet" href="highlightjs/styles/default.css">
+		<link rel="stylesheet" href="reveal/css/reveal.css">
+		<link rel="stylesheet" href="reveal/css/theme/white.css">
+		<link rel="stylesheet" href="cs193a-slides.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+
+<!-- BEGIN SLIDES AREA -->
+
+<section class="titleslide">
+	<h1>CS 193A</h1>
+
+	<p>React Native</p>
+</section>
+
+<section>
+	<h1>What is React Native?</h1>
+	
+	<div class="figures">
+		<img src="images/react-native-logo.png" alt="figure" />
+	</div>
+	
+	<ul>
+		<li><a class="popup" href="https://facebook.github.io/react-native/">React Native</a>: Framework to build cross-platform apps.
+			<ul>
+				<li>developed by Facebook
+				<li>based on <a class="popup" href="https://facebook.github.io/react/">React</a>, a JavaScript framework for building web front-ends
+				<li>code in JavaScript ("JSX") using a plain text editor (no Android Studio!)
+				<li>deploy the same app to Android, iOS, web, and/or desktop (wow)
+			</ul>
+	</ul>
+</section>
+
+<section>
+	<h1>Installing React Native</h1>
+	
+	<p>
+		<a class="popup" href="https://facebook.github.io/react-native/docs/getting-started.html">React Native Install Guide</a> (use this page for install):
+	</p>
+	
+	<ul>
+		<li>install <a class="popup" href="https://nodejs.org/en/">Node.js</a> (JavaScript server framework)
+			<ul>
+				<li>and npm (Node's package manager)
+			</ul>
+		<li>install <a class="popup" href="http://www.oracle.com/technetwork/java/javase/downloads/">Java Development Kit (JDK)</a>
+		<li>install <a class="popup" href="https://developer.android.com/studio">Android Studio</a> (you already did this)
+		<li>install a simple text editor like <a class="popup" href="https://atom.io/">Atom</a> or <a class="popup" href="https://www.sublimetext.com/">Sublime</a>
+		<li>install <strong>React Native</strong> from terminal  (see install guide)
+			<ul>
+				<li>optional: <a class="popup" href="https://facebook.github.io/watchman/docs/install.html#buildinstall">Watchman</a> (file system monitor) 
+				<li>optional: <a class="popup" href="https://yarnpkg.com/en/docs/install">Yarn</a> (package/dependency manager)
+		<li>create/test an app! (next slide)
+	</ul>
+	
+	<div class="figures">
+		<img src="images/atom-text-editor.png" alt="figure" />
+	</div>
+</section>
+
+<section>
+	<h1>Making a simple app</h1>
+	
+	<div class="figuresright">
+		<img src="images/react-initial-app.png" alt="figure" />
+	</div>
+	
+	<ul>
+		<li>create a project from command line:
+			<pre class="nolinenumbers"><code class="bash">
+react-native init <var>ProjectName</var>
+cd <var>ProjectName</var>
+</code></pre>
+		<li>edit <span class="filename">App.js</span> to modify the UI
+		<li>launch your Android emulator
+		<li>run the project in the emulator:
+			<pre class="nolinenumbers"><code class="bash">
+react-native run-android
+</code></pre>
+<!--
+react-native start --reset-cache
+-->
+		<li>(later) Android app is built/saved to: <span class="filename">android/app/build/outputs/apk/debug/<var>AppName</var>.apk</span>
+	</ul>
+</section>
+
+<section>
+	<h1>Hello, World!</h1>
+	
+	<div class="figuresright">
+		<img src="images/react-hello-world.png" alt="figure" />
+	</div>
+	
+	<pre><code class="javascript">
+// This is a simple "Hello, world" app.
+import React, {Component} from 'react';
+import {Text, View} from 'react-native';
+
+type Props = {};
+export default class App extends Component&lt;Props&gt; {
+	render() {
+		return (
+			&lt;Text&gt;Hello, world!&lt;/Text&gt;
+		);
+	}
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>Anatomy of a React Native app</h1>
+	
+	<ul>
+		<li>code is in <a class="popup" href="https://en.wikipedia.org/wiki/ECMAScript"><strong>ECMAScript</strong></a> (basically JavaScript)
+			<ul>
+				<li>advanced version of JS w/ classes, imports, etc.
+			</ul>
+		<li>overall app/activity is a subclass of <code>Component</code>
+			<ul>
+				<li>sub-components can be created and added to the activity
+			</ul>
+		<li>UI is expressed using <a class="popup" href="http://buildwithreact.com/tutorial/jsx">JSX</a>
+			<ul>
+				<li>a way of embedding blobs of XML inside JavaScript code
+				<li>used to combine XML layout with Java(Script) event code
+				<li><code>&lt;Text&gt;</code> is an example of a React JSX <strong>component</strong>
+			</ul>
+	</ul>
+
+	<div class="figureshorizontal">
+		<img src="images/react-native-bridge.png" alt="figure" />
+	</div>
+</section>
+
+<section>
+	<h1>React Components</h1>
+	
+	<ul>
+		<li><strong>common:</strong>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/activityindicator.html">ActivityIndicator</a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/button.html"><strong>Button</strong></a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/image.html"><strong>Image</strong></a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/keyboardavoidingview.html">KeyboardAvoidingView</a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/listview.html"><strong>ListView</strong></a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/mapview.html">MapView</a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/modal.html">Modal</a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/navigator.html">Navigator</a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/picker.html">Picker</a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/refreshcontrol.html">RefreshControl</a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/scrollview.html">ScrollView</a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/slider.html">Slider</a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/statusbar.html">StatusBar</a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/switch.html">Switch</a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/text.html"><strong>Text</strong></a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/textinput.html"><strong>TextInput</strong></a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/touchablehighlight.html">TouchableHighlight</a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/touchablenativefeedback.html">TouchableNativeFeedback</a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/touchableopacity.html">TouchableOpacity</a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/touchablewithoutfeedback.html">TouchableWithoutFeedback</a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/view.html"><strong>View</strong></a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/webview.html">WebView</a></span>
+		
+		<li>Android:
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/drawerlayoutandroid.html">DrawerLayoutAndroid</a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/progressbarandroid.html">ProgressBarAndroid</a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/toolbarandroid.html">ToolbarAndroid</a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/viewpagerandroid.html">ViewPagerAndroid</a></span>
+		
+		<li>iOS:
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/datepickerios.html">DatePickerIOS</a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/navigatorios.html">NavigatorIOS</a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/pickerios.html">PickerIOS</a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/progressviewios.html">ProgressViewIOS</a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/segmentedcontrolios.html">SegmentedControlIOS</a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/snapshotviewios.html">SnapshotViewIOS</a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/tabbarios.html">TabBarIOS</a></span>
+			<span class="component"><a class="popup" href="https://facebook.github.io/react-native/docs/tabbarios-item.html">TabBarIOS.Item</a></span>
+	</ul>
+</section>
+
+<section>
+	<h1>Styling</h1>
+	
+	<p>
+		two ways of styling components in React Native:
+	</p>
+	
+	<ol>
+		<li><strong>inline:</strong> style props defined in the component JSX code
+			<pre><code class="javascript">
+&lt;View style=<em>{{backgroundColor: 'powderblue', color: 'yellow'}}</em> /&gt;
+</code></pre>
+
+		<li><strong>style sheets:</strong> refer to named style classes in JS code below
+			<pre class="nolinenumbers"><code class="javascript">
+&lt;View style=<em>{styles.awesome}</em> /&gt;
+...
+const styles = StyleSheet.create({
+	<em>awesome:</em> {
+		backgroundColor: 'powderblue',
+		color: 'yellow'
+	},
+});
+</code></pre>
+	</ol>
+	
+	<pre class="nolinenumbers"><code class="javascript">
+</code></pre>
+
+	<ul>
+		<li>similar to <a class="popup" href="https://en.wikipedia.org/wiki/Cascading_Style_Sheets">Cascading Style Sheets (CSS)</a> from web dev
+		<li>documentation: <a class="popup" href="https://facebook.github.io/react-native/docs/style">Style</a>, <a class="popup" href="https://facebook.github.io/react-native/docs/stylesheet">StyleSheet</a>
+	</ul>
+</section>
+
+<section>
+	<h1>Style Sheets example</h1>
+	
+	<pre><code class="javascript">
+import { StyleSheet } from 'react-native';
+...
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: '#F5FCFF',
+	},
+	welcome: {
+		fontSize: 20,
+		textAlign: 'center',
+		margin: 10,
+	},
+	split_h_container: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		backgroundColor: '#ffdddd',
+		width: '70%'
+	},
+	...
+});
+</code></pre>
+</section>
+
+<section>
+	<h1>App layout</h1>
+	
+	<ul>
+		<li>FlexBox (<a class="popup" href="https://facebook.github.io/react-native/docs/flexbox.html">docs</a>): layout system, similar to Android <code>LinearLayout</code>
+			<table class="methodtable">
+				<tr><td><code>alignItems</code></td><td><code>'left'</code>, <code>'center'</code>, or <code>'right'</code></td></tr>
+				<tr><td><code>flex</code></td><td>set to an integer to stretch (weight); omit or 0 = use natural size</td></tr>
+				<tr><td><code>flexDirection</code></td><td><code>'row'</code> (horizontal) or <code>'column'</code> (vertical)</td></tr>
+				<tr><td><code>justifyContent</code></td><td><code>'center'</code>, <code>'flex-end'</code>, <code>'flex-start'</code>, <code>'space-around'</code>, <code>'space-between'</code>, <code>'space-evenly'</code></td></tr>
+				<tr><td><code>width</code>, <code>height</code></td><td>set to an integer, or percentage like <code>'100%'</code></td></tr>
+			</table>
+	</ul>
+	
+	<div class="figuresright">
+		<img src="images/react-native-flex.png" alt="figure" style="max-width: 5em" />
+	</div>
+	
+	<pre class="longcode"><code class="javascript">
+&lt;View style={{flex: 1}}&gt;
+	&lt;View style={{flex: 1, backgroundColor: 'powderblue'}} /&gt;
+	&lt;View style={{flex: 2, backgroundColor: 'skyblue'}} /&gt;
+	&lt;View style={{flex: 3, backgroundColor: 'steelblue'}} /&gt;
+&lt;/View&gt;
+</code></pre>
+</section>
+
+<section data-transition="fade-out">
+	<h1>Flex layout example, part 1</h1>
+	
+	<div class="figuresright">
+		<img src="images/react-native-layout-example.png" alt="figure" style="max-width: 5em" />
+	</div>
+	
+	<pre><code class="javascript">
+import React, { Component } from 'react';
+import { Button, StyleSheet, View } from 'react-native';
+
+type Props = {};
+export default class App extends Component&lt;Props&gt; {
+	render() {
+		return (
+			<span style="background-color: #ffffdd;">&lt;View style={styles.outer}&gt;</span>
+				<span style="background-color: #ffdddd;">&lt;View style={styles.split_h_container}&gt;</span>
+					<span style="background-color: #2296f3; color: white;">&lt;Button title=&quot;Button1&quot; /&gt;</span>
+					<span style="background-color: #2296f3; color: white;">&lt;Button title=&quot;Button2&quot; /&gt;</span>
+				<span style="background-color: #ffdddd;">&lt;/View&gt;</span>
+				<span style="background-color: #ddffdd;">&lt;View style={styles.centered_h_container}&gt;</span>
+					<span style="background-color: #2296f3; color: white;">&lt;Button title=&quot;Button3&quot; /&gt;</span>
+					<span style="background-color: #2296f3; color: white;">&lt;Button title=&quot;Button4&quot; /&gt;</span>
+					<span style="background-color: #2296f3; color: white;">&lt;Button title=&quot;Button5&quot; /&gt;</span>
+				<span style="background-color: #ddffdd;">&lt;/View&gt;</span>
+				<span style="background-color: #2296f3; color: white;">&lt;Button title=&quot;Button6&quot; /&gt;</span>
+			<span style="background-color: #ffffdd;">&lt;/View&gt;</span>
+		);
+	}
+}
+</pre></code>
+</section>
+
+<section data-transition="fade-in">
+	<h1>Flex layout example, part 2</h1>
+	
+	<div class="figuresright">
+		<img src="images/react-native-layout-example.png" alt="figure" style="max-width: 5em" />
+	</div>
+	
+	<pre><code class="javascript">
+const styles = StyleSheet.create({
+	outer: {
+		flex: 1,
+		flexDirection: 'column',
+		alignItems: 'center',
+		backgroundColor: '#ffffdd'
+	},
+	split_h_container: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		backgroundColor: '#ffdddd',
+		width: '100%'
+	},
+	centered_h_container: {
+		flex: 1,
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: '#ddffdd',
+		width: '100%'
+	},
+});
+</code></pre>
+</section>
+
+<section>
+	<h1>Elements of a class</h1>
+	
+	<ul>
+		<li>inside a constructor or function, refer to the component as <code>this</code>
+	</ul>
+	
+	<pre><code class="javascript">
+type Props = {}
+export default class <var>ClassName</var> extends Component&lt;Props&gt; {
+	// constructor: called when the component is created (onCreate)
+	constructor(props) {
+		super(props);
+		<var>statements</var>
+	}
+
+	// function: add behavior to the class
+	<var>functionName</var>() {
+		<var>statements</var>
+	}
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>App state</h1>
+	
+	<p>
+		A React app's appearance is based on its <strong>state</strong>.
+	</p>
+	
+	<ul>
+		<li>state is a JS object (map) of key/value pairs
+		<li>initialize in constructor; modify using <code>setState</code>
+		<li>note: always use <code>this.</code> prefix in JS code!
+	</ul>
+	
+	<pre><code class="javascript">
+type Props = {};
+export default class App extends Component&lt;Props&gt; {
+	constructor(props) {
+		super(props);
+		<em>this.state = {</em>
+			name: "Joe Student",
+			school: "Stanford University",
+			id: 1234,
+			money: 0.00,
+		<em>};</em>
+	}
+
+	render() {
+		...
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>Calling setState</h1>
+	
+	<ul>
+		<li>when app state changes, call <code><strong>setState</strong></code> to update UI on screen
+		<li>simply updating <code>this.state</code> does not refresh the UI!
+	</ul>
+	
+	<pre><code class="javascript">
+type Props = {};
+export default class App extends Component&lt;Props&gt; {
+	...
+
+	pacmanEatGhost() {
+		var score = this.state["score"];
+		score += 100;
+		<em>setState({
+			"score": score
+		});</em>
+	}
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>Displaying state</h1>
+	
+	<ul>
+		<li>onscreen UI can display state as part of various widgets
+		<li>no need to explicitly notify widgets of state changes
+	</ul>
+	
+	<pre><code class="javascript">
+type Props = {};
+export default class App extends Component&lt;Props&gt; {
+	constructor(props) {
+		super(props);
+		<em>this.state = {</em>
+			"score": 0
+		};
+	}
+	...
+	render() {
+		return (
+			&lt;View&gt;
+				&lt;Text&gt;You have <em>{this.state[&quot;score&quot;]}</em> points!&lt;/Text&gt;
+				...
+			&lt;/View&gt;
+		);
+	}
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>Events</h1>
+	
+	<ul>
+		<li>components have various events named <code>on<var>Xxx</var></code>
+			<ul>
+				<li>e.g. <code>onPress</code>, <code>onKeyDown</code>
+			</ul>
+		<li>specify an function to handle an event by "binding" it
+			<ul>
+				<li>syntax:  <code>this.<var>functionName</var>.bind(this)</code>
+			</ul>
+	</ul>
+	
+	<pre><code class="javascript">
+type Props = {};
+export default class App extends Component&lt;Props&gt; {
+	kaboomClick() {
+		// code to handle the event
+	}
+	...
+	render() {
+		return (
+			&lt;View&gt;
+				...
+				&lt;Button title={Kaboom!} onPress={<em>this.kaboomClick.bind(this)</em>} /&gt;
+			&lt;/View&gt;
+		);
+	}
+}
+</code></pre>
+</section>
+
+<section>
+	<h1>Exercise: Number Guess app</h1>
+	
+	<p>
+		Let's rewrite our very first app from CS 193A using React Native, the <strong>Number Guessing Game</strong>:
+	</p>
+	
+	<div class="figuresright">
+		<img src="images/numbergame-app.png" alt="image" />
+	</div>
+
+	<ul>
+		<li>user is shown two numbers</li>
+		<li>click button to choose which one is bigger</li>
+		<li>correct/incorrect message after each guess</li>
+		<li>earn points for each correct answer</li>
+	</ul>
+</section>
+
+<!-- END SLIDES AREA -->
+			</div>
+		</div>
+
+		<script src="highlightjs/highlight.pack.js" charset="utf-8"></script>
+		<script src="cs193a-slides.js"></script>
+		<script src="reveal/js/reveal.js"></script>
+		<script>
+			initializeSlides();
+		</script>
+	</body>
+</html>

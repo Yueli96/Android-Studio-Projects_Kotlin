@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">cs193a_hw6_yueli96</string>
+    <string name="exit">退出</string>
+    <string name="restart">重新开始</string>
+    <string name="play">开始</string>
+    <string name="highest_score">最高分：</string>
+    <string name="try_again">再试一次</string>
+    <string name="score">"得分: "</string>
+    <string name="remain_chances">"剩余次数: "</string>
+</resources>

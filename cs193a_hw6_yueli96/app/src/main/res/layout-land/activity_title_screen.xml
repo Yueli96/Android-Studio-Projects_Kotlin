@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".TitleScreenActivity">
+
+    <ImageView
+            android:id="@+id/game_logo"
+            android:layout_width="200dp"
+            android:layout_height="0dp"
+            android:src="@drawable/snakelogo"
+            android:scaleType="fitXY"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/score_text"
+            tools:ignore="ContentDescription"
+    />
+
+    <TextView
+            android:id="@+id/score_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/game_logo"
+            app:layout_constraintBottom_toTopOf="@id/exit_btn"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:text="@string/highest_score"
+            android:textSize="20sp"
+    />
+    <TextView
+            android:id="@+id/score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/game_logo"
+            app:layout_constraintBottom_toTopOf="@id/exit_btn"
+            app:layout_constraintLeft_toRightOf="@id/score_text"
+            android:text="0"
+            android:textSize="20sp"
+            app:layout_constraintVertical_bias="0.0"/>
+
+    <Button
+            android:id="@+id/play_btn"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/score_text"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/exit_btn"
+            android:text="@string/play"
+            android:onClick="onPlay"
+            android:textSize="20sp"
+    />
+
+    <Button
+            android:id="@+id/exit_btn"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/score_text"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/play_btn"
+            android:text="@string/exit"
+            android:onClick="onExit"
+            android:textSize="20sp"
+    />
+</android.support.constraint.ConstraintLayout>

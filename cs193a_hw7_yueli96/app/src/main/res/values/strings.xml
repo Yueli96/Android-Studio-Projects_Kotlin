@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name" translatable="false">cs193a_hw7_yueli96</string>
+    <string name="tree_chat">TreeChat</string>
+    <string name="treechat_description">an app for friends to chat with each other</string>
+    <string name="create_account">create account</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_up_treechat">Tree Chat Sign Up</string>
+    <string name="sign_in_treechat">Tree Chat Sign In</string>
+    <string name="email_address">Email Address</string>
+    <string name="password">Password</string>
+    <string name="sign_up_error">"Failed to sign up: account already exists or invalid email address"</string>
+    <string name="sign_up_success">"Account Created!"</string>
+    <string name="sign_in_error">"Failed to sign in: invalid account or password"</string>
+    <string name="sign_in_error_google">"Failed to sign in with google"</string>
+    <string name="sign_in_success">"Sign In Success!"</string>
+    <string name="channel_list">"Channel List"</string>
+    <string name="choose_channel">"Choose a channel or create one of your own"</string>
+    <string name="input_channel_name">"Name"</string>
+    <string name="input_channel_description">"Description"</string>
+    <string name="create">"Create"</string>
+    <string name="send">"Send"</string>
+    <string name="exit">"Exit"</string>
+    <string name="create_channel_error">"Please input channel name and description"</string>
+    <string name="channel_exist_error">"Channel name exist"</string>
+    <string name="channel_create_success">"Channel Created!"</string>
+    <string name="remember_me">Remember Me</string>
+    <string name="input_message">Input Message</string>
+</resources>

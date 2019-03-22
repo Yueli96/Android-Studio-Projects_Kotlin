@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ToDoListActivity">
+
+    <TextView
+            android:id="@+id/todolist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TO-DO LIST APP"
+            android:textSize="30sp"
+            android:padding="5sp"
+            android:layout_marginTop="10sp"
+            android:textColor="@android:color/white"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+            android:id="@+id/longpress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="complete an item by long-pressing\nmove an item to top by clicking the clock\ndelete an item by clicking the bin "
+            android:textSize="15sp"
+            android:layout_marginTop="5sp"
+            android:gravity="center"
+            android:textColor="@android:color/black"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/todolist"/>
+
+    <ListView
+            android:id="@+id/todo_list"
+            android:layout_width="wrap_content"
+            android:layout_height="200sp"
+            app:layout_constraintTop_toBottomOf="@+id/longpress"
+            android:scrollbars="vertical">
+    </ListView>
+
+    <ListView
+            android:id="@+id/done_list"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="20dp"
+            android:layout_height="80sp"
+            app:layout_constraintTop_toBottomOf="@+id/todo_list"
+            app:layout_constraintBottom_toTopOf="@+id/add_item"
+            android:scrollbars="vertical">
+    </ListView>
+
+    <EditText
+            android:id="@+id/add_item"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:hint="add a new item here"
+            android:gravity="center"
+            android:background="#FFFFFF"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/add_btn"/>
+
+    <Button
+            android:id="@+id/add_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ADD"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:onClick="onClickAdd"/>
+
+
+</android.support.constraint.ConstraintLayout>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImageButton
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/user_image"
+        android:src="@drawable/profile_test"
+        android:layout_width="100sp"
+        android:padding="10dp"
+        android:layout_height="100sp"
+        android:scaleType="fitXY"
+        tools:ignore="ContentDescription">
+</ImageButton>

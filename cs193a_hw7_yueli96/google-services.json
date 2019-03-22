@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "566892462239",
+    "firebase_url": "https://treechat-cs193a.firebaseio.com",
+    "project_id": "treechat-cs193a",
+    "storage_bucket": "treechat-cs193a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:566892462239:android:8b5259c70606faef",
+        "android_client_info": {
+          "package_name": "edu.stanford.cs193a.cs193a_hw7_yueli96"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "566892462239-v8qvv1uiathlgm9sks8a8u162jusmf2n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.stanford.cs193a.cs193a_hw7_yueli96",
+            "certificate_hash": "7e9ab80ce54e42b30b22cba12fdf159e66448380"
+          }
+        },
+        {
+          "client_id": "566892462239-k2r88relkago9v5onha9kolhg1nl36es.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAz8LgwtfyIK0V1G9t2aMjFpHTmemJQ55s"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "566892462239-k2r88relkago9v5onha9kolhg1nl36es.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
