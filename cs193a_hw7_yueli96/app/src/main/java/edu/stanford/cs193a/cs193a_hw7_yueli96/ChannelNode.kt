@@ -32,7 +32,6 @@ class UserNode: Serializable{
         this.username = email.split('@')[0]
         val re = Regex("[^A-Za-z0-9 ]")
         this.username = re.replace(username, "")
-
     }
 
     override fun toString(): String {
